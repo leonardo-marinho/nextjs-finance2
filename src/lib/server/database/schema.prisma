@@ -1,0 +1,135 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AccountTypeEnum {
+  CASH
+  CREDIT_CARD
+  PAYMENT_ACCOUNT
+}
+
+enum PaymentMethodEnum {
+  ACCOUNT
+  CREDIT_CARD
+}
+
+enum TransactionTypeEnum {
+  EXPENSE
+  INCOME
+  TRANSFER
+}
+
+enum TransactionRepeatEnum {
+  NONE
+  WEEKLY
+  MONTHLY
+}
+
+model Account {
+  id    Int             @id @default(autoincrement())
+  name  String
+  notes String?
+  type  AccountTypeEnum
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  accountTransactions Transaction[]
+  transfersToAccount  TransferTransaction[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+  deletedAt DateTime?
+}
+
+model Transaction {
+  id            Int                 @id @default(autoincrement())
+  date          DateTime  @db.Timestamp(0)
+  amount        Float
+  notes         String?
+  tags          String?
+  type          TransactionTypeEnum
+  paymentMethod PaymentMethodEnum
+  ignore        Boolean?
+
+  account    Account             @relation(fields: [accountId], references: [id])
+  accountId  Int
+  category   TransactionCategory @relation(fields: [categoryId], references: [id])
+  categoryId Int
+  repeat     TransactionRepeat?  @relation(fields: [repeatId], references: [id])
+  repeatId   Int?
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  transferTransaction   TransferTransaction[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+  deletedAt DateTime?
+}
+
+model TransactionCategory {
+  id   Int                 @id @default(autoincrement())
+  name String
+  type TransactionTypeEnum
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  transactions Transaction[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+  deletedAt DateTime?
+}
+
+model TransactionRepeat {
+  id         Int                   @id @default(autoincrement())
+  type TransactionRepeatEnum
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  transactions Transaction[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+  deletedAt DateTime?
+}
+
+model TransferTransaction {
+  id            Int         @id @default(autoincrement())
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
+  transactionId Int
+  toAccount     Account     @relation(fields: [toAccountId], references: [id])
+  toAccountId   Int
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+  deletedAt DateTime?
+}
+
+model User {
+  id       Int     @id @default(autoincrement())
+  name     String?
+  email    String  @unique
+  password String
+
+  accounts Account[]
+  transactions Transaction[]
+  transactionCategories TransactionCategory[]
+  transactionRepeats TransactionRepeat[]
+  transferTransactions TransferTransaction[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+  deletedAt DateTime?
+}
