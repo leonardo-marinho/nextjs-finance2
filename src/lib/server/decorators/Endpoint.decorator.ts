@@ -39,7 +39,7 @@ export const Endpoint =
     ): Promise<void> => {
       const cookieStore = cookies();
       const token = cookieStore.get('token')?.value;
-      const token = req.headers?.get('authorization');
+
       let userId: number | undefined = undefined;
 
       if (!!options?.private) {
