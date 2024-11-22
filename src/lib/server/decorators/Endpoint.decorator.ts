@@ -37,8 +37,9 @@ export const Endpoint =
       context: NextContext,
     ): Promise<void> => {
       const token = req.headers?.get('authorization');
+      let userId: number | undefined = undefined;
 
-      if (!options?.private) {
+      if (!!options?.private) {
         if (!token)
           throw new ApiUnauthorizedException(
             'Unauthorized. Token not provided',
@@ -47,6 +48,7 @@ export const Endpoint =
         try {
           if (!config.node.isDevEnv()) AuthService.verifyRefreshToken(token);
 
+          userId = AuthService.extractUserId(token);
           Object.defineProperty(this, 'isPrivate', {
             value: true,
             writable: true,
@@ -57,13 +59,6 @@ export const Endpoint =
       }
 
       const args: unknown[] = [];
-
-      let userId: number;
-
-      if (!token && config.node.isDevEnv()) userId = 1;
-      else if (token) userId = AuthService.extractUserId(token);
-      else
-        throw new ApiUnauthorizedException('Unauthorized. Token not provided');
 
       let body: unknown = null;
 
