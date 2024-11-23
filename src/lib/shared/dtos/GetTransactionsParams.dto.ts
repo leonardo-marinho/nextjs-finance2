@@ -7,7 +7,6 @@ import {
   IsDate,
   IsEnum,
   IsIn,
-  IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
@@ -51,8 +50,8 @@ export class GetTransactionsParamsDto extends ApiPaginationParamsDto {
   startDate?: Date;
 
   @IsOptional()
-  @IsString()
-  @IsNotEmpty()
-  @IsIn(['EXPENSE', 'INCOME', 'TRANSFER'])
-  type?: PrismaEnums.TransactionTypeEnum;
+  @Transform(({ value }: { value: string }) => value.split(','))
+  @IsArray()
+  @IsEnum(PrismaEnums.TransactionTypeEnum, { each: true })
+  type?: PrismaEnums.TransactionTypeEnum[] = [];
 }

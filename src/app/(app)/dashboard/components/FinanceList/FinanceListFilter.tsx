@@ -22,6 +22,30 @@ export const FinanceListFilter = (): JSX.Element => {
   } = useDashboard();
 
   const handleFilterClearClick = (): void => resetFilters();
+  const handleIncomeFilterToggle = (checked: boolean): void =>
+    updateFinanceListFilters({
+      type: checked
+        ? [
+            ...(financeListFilters?.type || []),
+            PrismaEnums.TransactionTypeEnum.INCOME,
+          ]
+        : financeListFilters?.type?.filter(
+            (type: PrismaEnums.TransactionTypeEnum) =>
+              type !== PrismaEnums.TransactionTypeEnum.INCOME,
+          ),
+    });
+  const handleExpenseFilterToggle = (checked: boolean): void =>
+    updateFinanceListFilters({
+      type: checked
+        ? [
+            ...(financeListFilters?.type || []),
+            PrismaEnums.TransactionTypeEnum.EXPENSE,
+          ]
+        : financeListFilters?.type?.filter(
+            (type: PrismaEnums.TransactionTypeEnum) =>
+              type !== PrismaEnums.TransactionTypeEnum.EXPENSE,
+          ),
+    });
   const handleCreditCardFilterToggle = (checked: boolean): void =>
     updateFinanceListFilters({
       paymentMethod: checked
@@ -73,6 +97,32 @@ export const FinanceListFilter = (): JSX.Element => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
+          <DropdownMenuLabel>Income and Expense</DropdownMenuLabel>
+          <DropdownMenuItem>
+            <div className="flex flex-1 items-center gap-2">
+              <Switch
+                defaultChecked={financeListFilters?.type?.includes(
+                  PrismaEnums.TransactionTypeEnum.INCOME,
+                )}
+                name="filter-type-income"
+                onCheckedChange={handleIncomeFilterToggle}
+              />
+              <Label htmlFor="filter-type-income">Income</Label>
+            </div>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <div className="flex flex-1 items-center gap-2">
+              <Switch
+                defaultChecked={financeListFilters?.type?.includes(
+                  PrismaEnums.TransactionTypeEnum.EXPENSE,
+                )}
+                name="filter-type-expense"
+                onCheckedChange={handleExpenseFilterToggle}
+              />
+              <Label htmlFor="filter-type-expense">Expense</Label>
+            </div>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
           <DropdownMenuLabel>Payment Method</DropdownMenuLabel>
           <DropdownMenuItem>
             <div className="flex flex-1 items-center gap-2">

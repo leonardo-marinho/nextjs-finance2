@@ -45,7 +45,7 @@ export class TransactionController {
       accountId: params?.accountId,
       paymentMethod: { in: params.paymentMethod },
       repeatId: params.repeatOnly ? { not: null } : undefined,
-      type: params.type,
+      type: { in: params.type },
       userId,
     };
 

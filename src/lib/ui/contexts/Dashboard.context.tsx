@@ -19,6 +19,10 @@ const DEFAULT_FILTERS: GetTransactionsParamsDto = {
     PrismaEnums.PaymentMethodEnum.CREDIT_CARD,
     PrismaEnums.PaymentMethodEnum.ACCOUNT,
   ],
+  type: [
+    PrismaEnums.TransactionTypeEnum.EXPENSE,
+    PrismaEnums.TransactionTypeEnum.INCOME,
+  ],
 };
 
 export interface DashboardContextData {
