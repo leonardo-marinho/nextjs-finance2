@@ -48,7 +48,7 @@ export const ComboBox = ({
     <DropdownMenu {...props}>
       <div className="flex h-9 w-full items-center justify-between rounded-md border border-neutral-200 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-neutral-950 placeholder:text-neutral-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-950 disabled:cursor-not-allowed disabled:opacity-50 dark:border-neutral-500 dark:file:text-neutral-50 dark:placeholder:text-neutral-400 dark:focus-visible:ring-neutral-300">
         <DropdownMenuTrigger asChild className="h-full flex-1">
-          <span>{value || placeholder}</span>
+          <span className="flex items-center">{value || placeholder}</span>
         </DropdownMenuTrigger>
         <X
           className={cn(
