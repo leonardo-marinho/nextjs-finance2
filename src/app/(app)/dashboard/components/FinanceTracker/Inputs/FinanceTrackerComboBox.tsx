@@ -21,7 +21,7 @@ export const FinanceTrackerComboBox = ({
   onTagsChange,
   ...props
 }: FinanceTrackerComboBoxProps): JSX.Element => {
-  const [value, setValue] = useState<string>(props?.defaultValue || '');
+  const [value, setValue] = useState<string | undefined>(props?.defaultValue);
   const { options, optionsSelectItems, transaction } = useFinanceTracker();
   const [items, setItems] = useState<ReactNode[]>([]);
 
@@ -122,19 +122,20 @@ export const FinanceTrackerComboBox = ({
         items={items}
         onClearTagsClick={handleClearTagsClick}
         onSearchValueChange={handleSearchValueChange}
+        placeholder="Search for tags..."
         value={
-          <div className="flex gap-1">
-            {value
-              ? (value as string)
-                  .trim()
-                  .split(',')
-                  .map((tag: string) => (
-                    <FinanceTrackerTag key={`value-${tag}`}>
-                      {tag}
-                    </FinanceTrackerTag>
-                  ))
-              : undefined}
-          </div>
+          !!value?.length ? (
+            <div className="flex gap-1">
+              {(value as string)
+                .trim()
+                .split(',')
+                .map((tag: string) => (
+                  <FinanceTrackerTag key={`value-${tag}`}>
+                    {tag}
+                  </FinanceTrackerTag>
+                ))}
+            </div>
+          ) : undefined
         }
       />
     </div>
