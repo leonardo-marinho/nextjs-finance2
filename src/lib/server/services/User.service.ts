@@ -8,7 +8,7 @@ import { UserModel } from '@/lib/shared/models/User.model';
 import { User } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { plainToClass } from 'class-transformer';
-import { omit } from 'lodash';
+import { pick } from 'lodash';
 
 export class UserService {
   static async getByEmail(email: string): Promise<null | User> {
@@ -28,9 +28,9 @@ export class UserService {
     if (!bcrypt.compareSync(body.password, user.password))
       throw new ApiAuthException('Invalid password');
 
-    const userWithoutPassword = omit(user, 'password');
-    const token = AuthService.signIn(userWithoutPassword);
-    const refreshToken = AuthService.generateRefreshToken(userWithoutPassword);
+    const userTokenPayload = pick(user, ['id', 'email']);
+    const token = AuthService.signIn(userTokenPayload);
+    const refreshToken = AuthService.generateRefreshToken(userTokenPayload);
 
     return {
       refreshToken,
