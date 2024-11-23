@@ -35,6 +35,7 @@ export interface DashboardContextData {
   hasFilters?: boolean;
   reloadDashboardData: () => void;
   resetFilters: () => void;
+  resetListFilters: (startDate?: Date, endDate?: Date) => void;
   transactionsQuery: null | ReturnType<
     typeof useApi<typeof TransactionApiService.getTransactions>
   >;
@@ -50,6 +51,7 @@ export const DashboardContext = createContext<DashboardContextData>({
   hasFilters: false,
   reloadDashboardData: noop,
   resetFilters: noop,
+  resetListFilters: noop,
   transactionsQuery: null,
   updateFinanceListFilters: noop,
 });
@@ -108,17 +110,21 @@ export const DashboardProvider = ({
     setHasFilters(true);
   };
 
+  const resetListFilters = (startDate?: Date, endDate?: Date): void => {
+    setHasFilters(false);
+    setTransactionsFilters({
+      endDate: endDate || transactionsFilters?.endDate,
+      startDate: startDate || transactionsFilters?.startDate,
+      ...DEFAULT_FILTERS,
+    });
+  };
+
   const resetFilters = useCallback(() => {
     const [startDate, endDate] = getStartEndDatesByMonth(
       currDate.getMonth() + 1,
       currDate.getFullYear(),
     );
-    setHasFilters(false);
-    setTransactionsFilters({
-      endDate,
-      startDate,
-      ...DEFAULT_FILTERS,
-    });
+    resetListFilters(startDate, endDate);
   }, [currDate]);
 
   return (
@@ -131,6 +137,7 @@ export const DashboardProvider = ({
         hasFilters,
         reloadDashboardData,
         resetFilters,
+        resetListFilters,
         transactionsQuery,
         updateFinanceListFilters,
       }}

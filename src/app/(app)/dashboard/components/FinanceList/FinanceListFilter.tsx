@@ -17,11 +17,11 @@ export const FinanceListFilter = (): JSX.Element => {
   const {
     financeListFilters,
     hasFilters,
-    resetFilters,
+    resetListFilters,
     updateFinanceListFilters,
   } = useDashboard();
 
-  const handleFilterClearClick = (): void => resetFilters();
+  const handleFilterClearClick = (): void => resetListFilters();
   const handleIncomeFilterToggle = (checked: boolean): void =>
     updateFinanceListFilters({
       type: checked
