@@ -43,6 +43,7 @@ export class TransactionController {
   ): Promise<ApiPaginatedData<TransactionModel>> {
     const filters: Prisma.TransactionWhereInput = {
       accountId: params?.accountId,
+      category: params?.placeholderOnly ? { name: 'Placeholder' } : undefined,
       paymentMethod: { in: params.paymentMethod },
       repeatId: params.repeatOnly ? { not: null } : undefined,
       type: { in: params.type },

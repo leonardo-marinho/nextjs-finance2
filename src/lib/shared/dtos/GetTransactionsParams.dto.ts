@@ -32,6 +32,13 @@ export class GetTransactionsParamsDto extends ApiPaginationParamsDto {
   paymentMethod?: PrismaEnums.PaymentMethodEnum[] = [];
 
   @IsOptional()
+  @Transform(({ value }: { value: string }) =>
+    value === 'true' ? true : false,
+  )
+  @IsBoolean()
+  placeholderOnly?: boolean;
+
+  @IsOptional()
   @IsBoolean()
   @Transform(({ value }: { value: string }) =>
     value === 'true' ? true : false,

@@ -72,6 +72,8 @@ export const FinanceListFilter = (): JSX.Element => {
     });
   const handleRepeatFilterToggle = (checked: boolean): void =>
     updateFinanceListFilters({ repeatOnly: checked });
+  const handlePlaceholderOnlyFilterToggle = (checked: boolean): void =>
+    updateFinanceListFilters({ placeholderOnly: checked });
   const handleSortByClick = (): void =>
     updateFinanceListFilters({
       sortOrder:
@@ -157,6 +159,16 @@ export const FinanceListFilter = (): JSX.Element => {
                 onCheckedChange={handleRepeatFilterToggle}
               />
               <Label htmlFor="filter-repeat-only">Repeat only</Label>
+            </div>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <div className="flex flex-1 items-center gap-2">
+              <Switch
+                defaultChecked={!!financeListFilters?.placeholderOnly}
+                name="filter-repeat-only"
+                onCheckedChange={handlePlaceholderOnlyFilterToggle}
+              />
+              <Label htmlFor="filter-repeat-only">Placeholder only</Label>
             </div>
           </DropdownMenuItem>
         </DropdownMenuContent>
