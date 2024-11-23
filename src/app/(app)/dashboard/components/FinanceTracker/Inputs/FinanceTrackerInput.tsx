@@ -20,6 +20,8 @@ export const FinanceTrackerInput = ({
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void =>
     onChange(e.target.value);
 
+  if (type === 'number') props.inputMode = 'decimal';
+
   return (
     <div className="flex flex-1 flex-col gap-2">
       <Label htmlFor={inputId}>{label}</Label>
