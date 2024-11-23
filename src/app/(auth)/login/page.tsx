@@ -53,7 +53,7 @@ const LoginPage = (): JSX.Element => {
 
   return (
     <div className="flex size-full flex-col items-center justify-center bg-white text-neutral-950 shadow dark:border-neutral-300 dark:bg-neutral-800 dark:text-neutral-50 lg:overflow-hidden">
-      <div className="flex w-96 flex-col gap-10">
+      <div className="flex w-3/4 flex-col gap-10 lg:w-96">
         <div className="flex flex-col gap-6">
           <div className="flex flex-1 flex-col gap-2">
             <Label htmlFor="email">Email</Label>
