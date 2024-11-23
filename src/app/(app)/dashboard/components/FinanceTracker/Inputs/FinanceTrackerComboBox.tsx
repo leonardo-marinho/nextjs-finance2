@@ -24,6 +24,7 @@ export const FinanceTrackerComboBox = ({
   const [value, setValue] = useState<string>(props?.defaultValue || '');
   const { options, optionsSelectItems, transaction } = useFinanceTracker();
   const [items, setItems] = useState<ReactNode[]>([]);
+
   const handleChange = (tags: string, categoryName?: string): void => {
     onTagsChange?.(tags);
     setValue(tags);
@@ -38,6 +39,12 @@ export const FinanceTrackerComboBox = ({
 
     // onCategoryChange(category.value);
   };
+
+  const handleClearTagsClick = (): void => {
+    setValue('');
+    onTagsChange?.('');
+  };
+
   const handleSearchValueChange = (searchValue: string): void => {
     const tags = options?.tags;
 
@@ -113,6 +120,7 @@ export const FinanceTrackerComboBox = ({
       <ComboBox
         {...props}
         items={items}
+        onClearTagsClick={handleClearTagsClick}
         onSearchValueChange={handleSearchValueChange}
         value={
           <div className="flex gap-1">
