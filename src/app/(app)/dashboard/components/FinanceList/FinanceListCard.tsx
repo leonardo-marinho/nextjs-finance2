@@ -5,6 +5,7 @@ import { Button } from '@/lib/ui/components/Button';
 import { Card, CardContent } from '@/lib/ui/components/Card';
 import { useFinanceTracker } from '@/lib/ui/hooks/useFinanceTracker';
 import { cn } from '@/lib/ui/utils/classnames';
+import { capitalize } from 'lodash';
 import { Copy, Pencil, Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
 
@@ -69,7 +70,7 @@ export const FinanceListCard = ({
               ?.split(',')
               .map((tag: string, index: number) => (
                 <FinanceTrackerTag key={`tag-${index}`}>
-                  {tag}
+                  {capitalize(tag)}
                 </FinanceTrackerTag>
               ))}
           </div>
