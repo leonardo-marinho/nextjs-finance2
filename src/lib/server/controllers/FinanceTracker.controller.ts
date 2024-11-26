@@ -114,11 +114,13 @@ export class FinanceTrackerController {
       accounts,
       expenseCategories: categories.filter(
         (category: TransactionCategoryPrismaModel) =>
-          category.type === PrismaEnums.TransactionTypeEnum.EXPENSE,
+          category.type === PrismaEnums.TransactionTypeEnum.EXPENSE ||
+          category.type === PrismaEnums.TransactionTypeEnum.TRANSFER,
       ),
       incomeCategories: categories.filter(
         (category: TransactionCategoryPrismaModel) =>
-          category.type === PrismaEnums.TransactionTypeEnum.INCOME,
+          category.type === PrismaEnums.TransactionTypeEnum.INCOME ||
+          category.type === PrismaEnums.TransactionTypeEnum.TRANSFER,
       ),
       tags: FinanceTrackerService.resolveTags(transactions),
       transactionCategories: categories.filter(
