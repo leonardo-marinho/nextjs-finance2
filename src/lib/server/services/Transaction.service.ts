@@ -1,5 +1,7 @@
 import { prisma } from '@/lib/server/database';
 import { TransactionModel } from '@/lib/shared/models/Transaction.model';
+import { addMonths } from '@/lib/shared/utils/Date.utils';
+import { $Enums as PrismaEnum } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 
 export class TransactionService {
@@ -16,11 +18,23 @@ export class TransactionService {
         transferTransaction: true,
       },
       where: {
-        date: {
-          gte: new Date(year, month).toISOString(),
-          lt: new Date(year, month + 1).toISOString(),
-        },
-        ignore: {not: true},
+        ignore: { not: true },
+        OR: [
+          {
+            date: {
+              gte: new Date(year, month).toISOString(),
+              lt: new Date(year, month + 1).toISOString(),
+            },
+            paymentMethod: PrismaEnum.PaymentMethodEnum.ACCOUNT,
+          },
+          {
+            billingDate: {
+              gte: new Date(year, month + 1).toISOString(),
+              lt: new Date(year, month + 2).toISOString(),
+            },
+            paymentMethod: PrismaEnum.PaymentMethodEnum.CREDIT_CARD,
+          },
+        ],
         userId,
       },
     });
@@ -39,10 +53,21 @@ export class TransactionService {
         transferTransaction: true,
       },
       where: {
-        date: {
-          lt: date.toISOString(),
-        },
-        ignore: {not: true},
+        ignore: { not: true },
+        OR: [
+          {
+            date: {
+              lt: date.toISOString(),
+            },
+            paymentMethod: PrismaEnum.PaymentMethodEnum.ACCOUNT,
+          },
+          {
+            billingDate: {
+              lt: addMonths(date, 1).toISOString(),
+            },
+            paymentMethod: PrismaEnum.PaymentMethodEnum.CREDIT_CARD,
+          },
+        ],
         userId,
       },
     });

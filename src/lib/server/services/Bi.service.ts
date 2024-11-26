@@ -4,7 +4,10 @@ import {
   BalanceBiDto,
 } from '@/lib/shared/dtos/BiGetBalanceBi.dto';
 import { TransactionModel } from '@/lib/shared/models/Transaction.model';
-import { Transaction as TransactionPrismaModel } from '@prisma/client';
+import {
+  $Enums as PrismaEnums,
+  Transaction as TransactionPrismaModel,
+} from '@prisma/client';
 
 export class BiService {
   static getAccountsBalance(
@@ -49,8 +52,25 @@ export class BiService {
       currMonthTransactions,
       (transaction: TransactionModel) => !transaction.isCreditCardTransaction(),
     );
+
+    const firstDayOfCurrMonth: Date = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+    );
     const prevMonthBalance: number = this.sumAccountsBalance(
-      this.getAccountsBalance(prevMonthTransactions, () => true),
+      this.getAccountsBalance(
+        prevMonthTransactions,
+        (transaction: TransactionPrismaModel) => {
+          if (
+            transaction.paymentMethod !==
+              PrismaEnums.PaymentMethodEnum.CREDIT_CARD ||
+            !transaction.billingDate
+          )
+            return true;
+
+          return transaction.billingDate < firstDayOfCurrMonth;
+        },
+      ),
     );
     const currMonthIncome: number = this.sumAccountsBalance(
       this.getAccountsBalance(
@@ -58,12 +78,18 @@ export class BiService {
         (transaction: TransactionModel) => transaction.isIncome(),
       ),
     );
-    const currMonthExpense: number = this.sumAccountsBalance(
-      this.getAccountsBalance(
+    const currMonthExpense: number = this.sumAccountsBalance([
+      ...this.getAccountsBalance(
         currMonthTransactions,
-        (transaction: TransactionModel) => transaction.isExpense(),
+        (transaction: TransactionModel) =>
+          transaction.isExpense() && !transaction.isCreditCardTransaction(),
       ),
-    );
+      ...this.getAccountsBalance(
+        prevMonthTransactions,
+        (transaction: TransactionModel) =>
+          transaction.isExpense() && transaction.isCreditCardTransaction(),
+      ),
+    ]);
     const currMonthBalance: number =
       prevMonthBalance + currMonthIncome + currMonthExpense;
 
@@ -84,13 +110,13 @@ export class BiService {
     const resetDate: Date = new Date(date);
     resetDate.setHours(0, 0, 0, 0);
 
-    let currMonthTransactions: TransactionPrismaModel[] =
+    const currMonthTransactions: TransactionPrismaModel[] =
       await TransactionService.getTransactionsByMonth(date, userId);
     const firstDayOfCurrMonth: Date = new Date(
       date.getFullYear(),
       date.getMonth(),
     );
-    let prevMonthTransactions: TransactionPrismaModel[] =
+    const prevMonthTransactions: TransactionPrismaModel[] =
       await TransactionService.getTransactionsUntilDate(
         firstDayOfCurrMonth,
         userId,

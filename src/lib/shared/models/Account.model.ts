@@ -5,6 +5,7 @@ export class AccountModel
   extends PrismaBaseModel
   implements AccountPrismaModel
 {
+  creditCardBillDay: null | number;
   name: string;
   notes: null | string;
   type: $Enums.AccountTypeEnum;

@@ -11,6 +11,7 @@ export class TransactionEditModel extends TransactionModel {
     super();
     this.accountId = transaction?.accountId || 0;
     this.amount = transaction?.amount || 0;
+    this.billingDate = transaction?.billingDate || null;
     this.categoryId = transaction?.categoryId || 0;
     this.date = transaction?.date || new Date();
     this.id = transaction?.id || 0;

@@ -12,6 +12,7 @@ interface FinanceTrackerSelectProps {
   data?: SelectItemData[];
   defaultValue?: SelectItemDataValue;
   id?: string;
+  isDisabled?: boolean;
   label: string;
   name: string;
   onChange: (value: SelectItemDataValue) => void;
@@ -21,6 +22,7 @@ interface FinanceTrackerSelectProps {
 export const FinanceTrackerSelect = ({
   data = [],
   defaultValue,
+  isDisabled,
   label,
   name,
   id: inputId = name,
@@ -32,7 +34,11 @@ export const FinanceTrackerSelect = ({
   return (
     <div className="flex flex-1 flex-col gap-2">
       <Label htmlFor={inputId}>{label}</Label>
-      <Select defaultValue={defaultValue} onValueChange={handleChange}>
+      <Select
+        defaultValue={defaultValue}
+        disabled={isDisabled}
+        onValueChange={handleChange}
+      >
         <SelectTrigger id={inputId}>
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>

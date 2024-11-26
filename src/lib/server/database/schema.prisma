@@ -35,6 +35,7 @@ model Account {
   name  String
   notes String?
   type  AccountTypeEnum
+  creditCardBillDay Int?
 
   userId Int
   user   User @relation(fields: [userId], references: [id])
@@ -56,6 +57,7 @@ model Transaction {
   type          TransactionTypeEnum
   paymentMethod PaymentMethodEnum
   ignore        Boolean?
+  billingDate   DateTime?  @db.Timestamp(0)
 
   account    Account             @relation(fields: [accountId], references: [id])
   accountId  Int

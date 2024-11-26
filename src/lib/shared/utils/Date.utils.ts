@@ -35,3 +35,6 @@ export const resetTime = (date: Date): Date => {
 
   return newDate;
 };
+
+export const getSelectValueDateString = (date: Date): string =>
+  date.toISOString().split('T')[0];

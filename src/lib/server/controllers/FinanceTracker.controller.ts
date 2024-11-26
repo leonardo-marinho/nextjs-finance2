@@ -30,6 +30,7 @@ export class FinanceTrackerController {
         body.type === PrismaEnums.TransactionTypeEnum.EXPENSE
           ? -amount
           : amount,
+      billingDate: body.billingDate,
       categoryId: body.categoryId,
       date: body.date.toISOString(),
       ignore: body.ignore,
@@ -144,6 +145,7 @@ export class FinanceTrackerController {
         body.type === PrismaEnums.TransactionTypeEnum.EXPENSE
           ? -amount
           : amount,
+      billingDate: body.billingDate,
       categoryId: body.categoryId,
       date: body.date.toISOString(),
       ignore: body.ignore,

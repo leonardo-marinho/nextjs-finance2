@@ -50,7 +50,7 @@ export const FinanceListCard = ({
               <p className="font-medium">{transaction.Category?.name}</p>
               <p className="text-sm text-neutral-500 dark:text-neutral-400">
                 {transaction.Account?.name}{' '}
-                {transaction.isCreditCardTransaction() && ' - Credit Card'}
+                {transaction.isCreditCardTransaction() && ` - Credit Card`}
               </p>
             </div>
             <BalanceAmount
@@ -61,6 +61,13 @@ export const FinanceListCard = ({
             />
           </div>
           <div className="mt-1 flex w-full gap-2 overflow-x-auto">
+            {!!transaction.billingDate && (
+              <span className="inline-flex items-center rounded-md bg-blue-500 px-2 py-1 text-xs font-medium text-white ring-1 ring-inset ring-blue-700/10">
+                {transaction.BillingDate?.toLocaleDateString('pt-BR', {
+                  month: 'short',
+                })}
+              </span>
+            )}
             {!!transaction.repeatId && (
               <span className="inline-flex items-center rounded-md bg-red-500 px-2 py-1 text-xs font-medium text-white ring-1 ring-inset ring-blue-700/10">
                 Repeats

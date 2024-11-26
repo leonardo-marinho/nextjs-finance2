@@ -8,6 +8,7 @@ export const FinanceTrackerInputNames: Record<
 > = {
   ACCOUNT: 'accountId',
   AMOUNT: 'amount',
+  BILLING_DATE: 'billingDate',
   CATEGORY: 'categoryId',
   DATE: 'date',
   IGNORE: 'ignore',

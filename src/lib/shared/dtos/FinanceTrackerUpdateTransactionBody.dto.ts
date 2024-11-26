@@ -10,6 +10,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  ValidateIf,
 } from 'class-validator';
 
 export class FinanceTrackerUpdateTransactionBody
@@ -20,6 +21,15 @@ export class FinanceTrackerUpdateTransactionBody
 
   @IsNumber()
   amount: number;
+
+  @IsOptional()
+  @IsDate()
+  @Transform(({ value }: { value: string }) => new Date(value))
+  @ValidateIf(
+    (args: FinanceTrackerUpdateTransactionBody) =>
+      args.paymentMethod !== PrismaEnums.PaymentMethodEnum.CREDIT_CARD,
+  )
+  billingDate?: Date | null;
 
   @IsNumber()
   categoryId: number;

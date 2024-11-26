@@ -17,6 +17,7 @@ export class TransactionModel
   protected account?: AccountPrismaModel;
   accountId: number;
   amount: number;
+  billingDate: Date | null;
   protected category?: TransactionCategoryPrismaModel;
   categoryId: number;
   date: Date;
@@ -26,6 +27,10 @@ export class TransactionModel
   repeatId: null | number;
   tags: null | string;
   type: PrismaEnums.TransactionTypeEnum;
+
+  getBillingDateString(): string {
+    return (this.BillingDate?.toISOString?.() || '').split('T')[0];
+  }
 
   getDateString(): string {
     return this.Date.toISOString().split('T')[0];
@@ -57,6 +62,10 @@ export class TransactionModel
 
   get Amount(): AmountModel {
     return new AmountModel(this.amount);
+  }
+
+  get BillingDate(): Date | null {
+    return !this?.billingDate ? null : new Date(this.billingDate);
   }
 
   get Category(): TransactionCategoryModel | undefined {
