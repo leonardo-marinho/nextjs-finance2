@@ -3,28 +3,13 @@ import { FinanceTrackerInput } from '@/app/(app)/dashboard/components/FinanceTra
 import { FinanceTrackerSelect } from '@/app/(app)/dashboard/components/FinanceTracker/Inputs/FinanceTrackerSelect';
 import { FinanceTrackerSharedFooterInputs } from '@/app/(app)/dashboard/components/FinanceTracker/Inputs/FinanceTrackerSharedFooterInputs';
 import { FinanceTrackerSharedInputs } from '@/app/(app)/dashboard/components/FinanceTracker/Inputs/FinanceTrackerSharedInputs';
-import {
-  addMonths,
-  getSelectValueDateString,
-} from '@/lib/shared/utils/Date.utils';
 import { Button } from '@/lib/ui/components/Button';
 import { TabsContent } from '@/lib/ui/components/Tabs';
-import {
-  monthSelectItemData,
-  yearSelectItemData,
-} from '@/lib/ui/constants/Date.constants';
-import { useDashboard } from '@/lib/ui/hooks/useDashboard';
 import { useFinanceTracker } from '@/lib/ui/hooks/useFinanceTracker';
-import {
-  getDefaultBillingDate,
-  parseBillingDate,
-} from '@/lib/ui/utils/Date.utils';
 import {
   Account as AccountPrismaModel,
   $Enums as PrismaEnums,
 } from '@prisma/client';
-import { noop } from 'lodash';
-import { ChevronDownCircle } from 'lucide-react';
 import React, { useMemo, useState } from 'react';
 
 interface FinanceTrackerExpenseTabProps
@@ -33,7 +18,6 @@ interface FinanceTrackerExpenseTabProps
 export const FinanceTrackerExpenseTab = ({
   ...props
 }: FinanceTrackerExpenseTabProps): JSX.Element => {
-  const { currDate } = useDashboard();
   const { isEditMode, options, saveChanges, setFieldValue, transaction } =
     useFinanceTracker();
   const [inProgressDateValue, setInProgressDateValue] = useState<string>('');
