@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 export const generateArgRequestMetadata = (
   argName: string,
   target: object,
