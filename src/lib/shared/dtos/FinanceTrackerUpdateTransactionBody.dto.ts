@@ -29,7 +29,7 @@ export class FinanceTrackerUpdateTransactionBody
   @IsOptional()
   @IsDate()
   @Transform(({ value }: { value?: null | string }) =>
-    isStrictNullOrUndefined(value) || isValidDate(new Date(value!))
+    isStrictNullOrUndefined(value) || !isValidDate(new Date(value!))
       ? null
       : new Date(value!),
   )
