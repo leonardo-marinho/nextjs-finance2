@@ -2,8 +2,8 @@ export const getStartEndDatesByMonth = (
   month: number,
   year: number,
 ): [Date, Date] => {
-  const startDate = new Date(year, month - 1, 1);
-  const endDate = new Date(year, month, 0);
+  const startDate = new Date(year, month - 1);
+  const endDate = addMonths(startDate, 1);
 
   return [startDate, endDate];
 };

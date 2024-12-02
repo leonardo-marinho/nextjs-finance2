@@ -48,22 +48,14 @@ export class BiService {
     let prevMonthBalanceBi: BalanceBiDto['prevMonthBalanceBi'] | null =
       skipPrevMonth
         ? null
-        : pick(
-            await this.getBalanceBi(
-              userId,
-              new Date(0),
-              addDays(startDate, -1),
-              true,
-            ),
-            [
-              'balance',
-              'billableBalance',
-              'totalBillableExpense',
-              'totalBillableIncome',
-              'totalExpense',
-              'totalIncome',
-            ],
-          );
+        : pick(await this.getBalanceBi(userId, new Date(0), startDate, true), [
+            'balance',
+            'billableBalance',
+            'totalBillableExpense',
+            'totalBillableIncome',
+            'totalExpense',
+            'totalIncome',
+          ]);
 
     const accountsTransactions: TransactionModel[] =
       await TransactionService.getTransactions(userId, {

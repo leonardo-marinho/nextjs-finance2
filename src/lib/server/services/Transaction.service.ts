@@ -89,7 +89,7 @@ export class TransactionService {
           ? rawFilters.startDate
           : new Date(rawFilters.startDate)
         )?.toISOString(),
-        lte: (rawFilters.endDate?.toISOString?.()
+        lt: (rawFilters.endDate?.toISOString?.()
           ? rawFilters.endDate
           : new Date(rawFilters.endDate)
         )?.toISOString(),
@@ -101,7 +101,7 @@ export class TransactionService {
           ? rawFilters.billableStartDate
           : new Date(rawFilters.billableStartDate)
         )?.toISOString(),
-        lte: (rawFilters.billableEndDate?.toISOString?.()
+        lt: (rawFilters.billableEndDate?.toISOString?.()
           ? rawFilters.billableEndDate
           : new Date(rawFilters.billableEndDate)
         )?.toISOString(),

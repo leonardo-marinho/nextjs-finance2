@@ -6,7 +6,7 @@ import {
   BalanceBiDto,
   BiGetBalanceBiParamsDto,
 } from '@/lib/shared/dtos/BiGetBalanceBi.dto';
-import { lastDayOfMonth } from '@/lib/shared/utils/Date.utils';
+import { addMonths } from '@/lib/shared/utils/Date.utils';
 
 export class BiController {
   @Endpoint({ private: true })
@@ -16,16 +16,7 @@ export class BiController {
     { date }: BiGetBalanceBiParamsDto,
   ): Promise<BalanceBiDto> {
     const startMonthDate = new Date(date.getFullYear(), date.getMonth());
-    const endMonthDate = lastDayOfMonth(startMonthDate);
-    console.log('offset', new Date().getTimezoneOffset());
-    console.log(
-      'startMonthDate',
-      startMonthDate,
-      startMonthDate.toISOString(),
-      ' endMonthDate',
-      endMonthDate,
-      endMonthDate.toISOString(),
-    );
+    const endMonthDate = addMonths(startMonthDate, 1);
 
     return BiService.getBalanceBi(userId, startMonthDate, endMonthDate);
   }
