@@ -17,6 +17,15 @@ export class BiController {
   ): Promise<BalanceBiDto> {
     const startMonthDate = new Date(date.getFullYear(), date.getMonth());
     const endMonthDate = lastDayOfMonth(startMonthDate);
+    console.log('offset', new Date().getTimezoneOffset());
+    console.log(
+      'startMonthDate',
+      startMonthDate,
+      startMonthDate.toISOString(),
+      ' endMonthDate',
+      endMonthDate,
+      endMonthDate.toISOString(),
+    );
 
     return BiService.getBalanceBi(userId, startMonthDate, endMonthDate);
   }
