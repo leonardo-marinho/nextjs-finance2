@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { Transform, TransformFnParams, Type } from 'class-transformer';
+import { Transform, TransformFnParams } from 'class-transformer';
 import {
   IsArray,
   IsIn,
@@ -44,6 +44,5 @@ export class ApiPagination<TFields extends string = string> {
 
 export class ApiPaginationParamsDto<TFields extends string = string> {
   @IsOptional()
-  @Type(() => ApiPagination)
   pagination?: ApiPagination<TFields>;
 }

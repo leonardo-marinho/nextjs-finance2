@@ -1,7 +1,7 @@
 import { TransactionQueryRawFilters } from '@/lib/server/services/Transaction.service';
 import { ApiPaginationParamsDto } from '@/lib/shared/dtos/ApiPaginationParams.dto';
 import { Prisma, $Enums as PrismaEnums } from '@prisma/client';
-import { Transform, Type } from 'class-transformer';
+import { Transform } from 'class-transformer';
 import {
   IsArray,
   IsBoolean,
@@ -46,7 +46,6 @@ export class TransactionsFilters implements TransactionQueryRawFilters {
 
   @IsOptional()
   @IsArray()
-  @Type(() => TransactionsFilters)
   or?: TransactionsFilters[];
 
   @IsOptional()
@@ -79,6 +78,5 @@ export class GetTransactionsParamsDto extends ApiPaginationParamsDto<
 > {
   @IsOptional()
   @ValidateNested()
-  @Type(() => TransactionsFilters)
   filters?: TransactionsFilters;
 }
