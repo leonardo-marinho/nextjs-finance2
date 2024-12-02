@@ -24,7 +24,9 @@ export class FinanceTrackerUpdateTransactionBody
 
   @IsOptional()
   @IsDate()
-  @Transform(({ value }: { value: string }) => new Date(value))
+  @Transform(({ value }: { value?: null | string }) =>
+    value ? new Date(value) : null,
+  )
   @ValidateIf(
     (args: FinanceTrackerUpdateTransactionBody) =>
       args.paymentMethod !== PrismaEnums.PaymentMethodEnum.CREDIT_CARD,
