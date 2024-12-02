@@ -1,4 +1,8 @@
-import { GetTransactionsParamsDto } from '@/lib/shared/dtos/GetTransactionsParams.dto';
+import { ApiPagination } from '@/lib/shared/dtos/ApiPaginationParams.dto';
+import {
+  GetTransactionsParamsDto,
+  TransactionsFilters,
+} from '@/lib/shared/dtos/GetTransactionsParams.dto';
 import { IdQueryDto } from '@/lib/shared/dtos/IdQuery.dto';
 import { TransactionModel } from '@/lib/shared/models/Transaction.model';
 import { ApiPaginatedData, ApiResponse } from '@/lib/shared/types/Api.types';
@@ -22,7 +26,11 @@ class TransactionApiService extends ApiService {
       GetTransactionsParamsDto
     >(`/api/transactions`, {
       method: 'GET',
-      params,
+      params: {
+        ...params,
+        filters: JSON.stringify(params?.filters) as TransactionsFilters,
+        pagination: JSON.stringify(params?.pagination) as ApiPagination,
+      },
     });
 
     return paginatedResponseToInstance(response, TransactionModel);

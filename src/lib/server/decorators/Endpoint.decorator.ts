@@ -95,17 +95,24 @@ export const Endpoint =
       );
       let params: Record<string, unknown> = {};
       req.nextUrl.searchParams.forEach((value: string, key: string) => {
-        params[key] = value;
+        try {
+          params[key] = JSON.parse(value);
+        } catch (_) {
+          params[key] = value;
+        }
       });
-      try {
-        if (paramsSchema)
+
+      if (paramsSchema)
+        try {
           params = (await parsePayload(params || {}, paramsSchema)) as Record<
             string,
             unknown
           >;
-      } catch (error) {
-        throw new ApiParamsValidationException(error as ValidationError[]);
-      }
+        } catch (error) {
+          throw new ApiParamsValidationException(paramsSchema.name, [
+            error,
+          ] as ValidationError[]);
+        }
 
       const querySchema = getArgRequestMetadata<ClassConstructor<unknown>>(
         'querySchema',

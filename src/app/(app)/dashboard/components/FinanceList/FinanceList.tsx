@@ -1,5 +1,5 @@
-import { FinanceListCard } from '@/app/(app)/dashboard/components/FinanceList/FinanceListCard';
 import { FinanceListFilter } from '@/app/(app)/dashboard/components/FinanceList/FinanceListFilter';
+import { FinanceListTab } from '@/app/(app)/dashboard/components/FinanceList/FinanceListTab';
 import { TransactionModel } from '@/lib/shared/models/Transaction.model';
 import {
   Card,
@@ -7,16 +7,37 @@ import {
   CardHeader,
   CardTitle,
 } from '@/lib/ui/components/Card';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/lib/ui/components/Tabs';
 import { useDashboard } from '@/lib/ui/hooks/useDashboard';
-import { useFinanceTracker } from '@/lib/ui/hooks/useFinanceTracker';
 import { Spinner, Theme } from '@radix-ui/themes';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 export const FinanceList = (): JSX.Element => {
-  const { cloneTransaction, deleteTransaction, editTransaction } =
-    useFinanceTracker();
   const { transactionsQuery } = useDashboard();
-  const data = transactionsQuery?.data;
+  const response = transactionsQuery?.data;
+
+  const accountTransactions = useMemo(
+    () =>
+      response?.data?.filter(
+        (transaction: TransactionModel) =>
+          !transaction.isCreditCardTransaction(),
+      ) || [],
+    [response?.data],
+  );
+
+  const creditCardTransactions = useMemo(
+    () =>
+      response?.data?.filter((transaction: TransactionModel) =>
+        transaction.isCreditCardTransaction(),
+      ) || [],
+    [response?.data],
+  );
+
   const isLoading = transactionsQuery?.loading;
 
   return (
@@ -26,44 +47,27 @@ export const FinanceList = (): JSX.Element => {
         <FinanceListFilter />
       </CardHeader>
       <CardContent className="h-0 grow overflow-auto">
-        {isLoading || !data ? (
+        {isLoading || !response ? (
           <Theme className="flex size-full justify-center bg-transparent">
             <Spinner size="3" />
           </Theme>
         ) : (
-          <div className="space-y-4">
-            {(data.data || []).map(
-              (
-                transaction: TransactionModel,
-                index: number,
-                arr: TransactionModel[],
-              ) => (
-                <React.Fragment key={transaction.id}>
-                  {arr[index - 1]?.date !== transaction.date && (
-                    <h3 className="mb-2 font-semibold">
-                      {transaction.Date.toLocaleDateString('pt-BR', {
-                        weekday: 'long',
-                      })}
-                      ,{' '}
-                      {transaction.Date.toLocaleDateString('pt-BR', {
-                        day: '2-digit',
-                      })}{' '}
-                      de{' '}
-                      {transaction.Date.toLocaleDateString('pt-BR', {
-                        month: 'long',
-                      })}
-                    </h3>
-                  )}
-                  <FinanceListCard
-                    cloneTransaction={cloneTransaction}
-                    deleteTransaction={deleteTransaction}
-                    editTransaction={editTransaction}
-                    transaction={transaction}
-                  />
-                </React.Fragment>
-              ),
-            )}
-          </div>
+          <Tabs defaultValue="account">
+            <TabsList className="mb-6 grid w-full grid-cols-2">
+              <TabsTrigger value={'account'}>
+                Account ({accountTransactions.length})
+              </TabsTrigger>
+              <TabsTrigger value={'credit-card'}>
+                Credit Card Bill ({creditCardTransactions.length})
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent className="flex flex-col gap-4" value={'account'}>
+              <FinanceListTab data={accountTransactions} />
+            </TabsContent>
+            <TabsContent className="flex flex-col gap-4" value={'credit-card'}>
+              <FinanceListTab data={creditCardTransactions} />
+            </TabsContent>
+          </Tabs>
         )}
       </CardContent>
     </Card>

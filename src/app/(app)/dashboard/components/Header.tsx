@@ -1,9 +1,5 @@
 'use client';
 import { transactionSupportedYears } from '@/lib/shared/constants/Transaction';
-import {
-  getStartEndDatesByMonth,
-  getStartEndDatesByYear,
-} from '@/lib/shared/utils/Date.utils';
 import { Button } from '@/lib/ui/components/Button';
 import {
   Select,
@@ -17,7 +13,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 export const DashboardHeader = (): JSX.Element => {
-  const { currDate, updateFinanceListFilters } = useDashboard();
+  const { currDate, updateRefDate } = useDashboard();
 
   const [monthFilter, setMonthFilter] = useState<string>(
     String(currDate.getMonth() + 1),
@@ -27,20 +23,7 @@ export const DashboardHeader = (): JSX.Element => {
   );
 
   useEffect(() => {
-    let [startDate, endDate]: Date[] = [];
-
-    if (monthFilter === 'ALL')
-      [startDate, endDate] = getStartEndDatesByYear(Number(yearFilter));
-    else
-      [startDate, endDate] = getStartEndDatesByMonth(
-        Number(monthFilter),
-        Number(yearFilter),
-      );
-
-    updateFinanceListFilters({
-      endDate: endDate,
-      startDate: startDate,
-    });
+    updateRefDate(new Date(Number(yearFilter), Number(monthFilter) - 1));
   }, [monthFilter, yearFilter]);
 
   const handlePrevMonthClick = (): void => {

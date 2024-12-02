@@ -1,77 +1,100 @@
 import { prisma } from '@/lib/server/database';
+import {
+  ApiPagination,
+  ApiPaginationSortOrder,
+} from '@/lib/shared/dtos/ApiPaginationParams.dto';
+import { TransactionsFilters } from '@/lib/shared/dtos/GetTransactionsParams.dto';
 import { TransactionModel } from '@/lib/shared/models/Transaction.model';
-import { addMonths } from '@/lib/shared/utils/Date.utils';
-import { $Enums as PrismaEnum } from '@prisma/client';
+import { Prisma, $Enums as PrismaEnum } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 
-export class TransactionService {
-  static async getTransactionsByMonth(
-    date: Date,
-    userId: number,
-  ): Promise<TransactionModel[]> {
-    const month: number = date.getMonth();
-    const year: number = date.getFullYear();
-    const records = await prisma.transaction.findMany({
-      include: {
-        account: true,
-        category: true,
-        transferTransaction: true,
-      },
-      where: {
-        ignore: { not: true },
-        OR: [
-          {
-            date: {
-              gte: new Date(year, month).toISOString(),
-              lt: new Date(year, month + 1).toISOString(),
-            },
-            paymentMethod: PrismaEnum.PaymentMethodEnum.ACCOUNT,
-          },
-          {
-            billingDate: {
-              gte: new Date(year, month + 1).toISOString(),
-              lt: new Date(year, month + 2).toISOString(),
-            },
-            paymentMethod: PrismaEnum.PaymentMethodEnum.CREDIT_CARD,
-          },
-        ],
-        userId,
-      },
-    });
+export interface TransactionQueryRawFilters {
+  accountId?: number;
+  billableEndDate?: Date;
+  billableStartDate?: Date;
+  endDate?: Date;
+  id?: number;
+  or?: TransactionQueryRawFilters[];
+  paymentMethod?: PrismaEnum.PaymentMethodEnum[];
+  placeholderOnly?: boolean;
+  repeatOnly?: boolean;
+  startDate?: Date;
+  type?: PrismaEnum.TransactionTypeEnum[];
+}
 
-    return plainToInstance(TransactionModel, records);
+export class TransactionService {
+  static async getTransactions(
+    userId: number,
+    rawFilters?: TransactionsFilters,
+    pagination?: ApiPagination,
+  ): Promise<TransactionModel[]> {
+    const [transactions] = await this.getTransactionsAndCount(
+      userId,
+      rawFilters,
+      pagination,
+    );
+
+    return transactions;
   }
 
-  static async getTransactionsUntilDate(
-    date: Date,
+  static async getTransactionsAndCount(
     userId: number,
-  ): Promise<TransactionModel[]> {
-    const records = await prisma.transaction.findMany({
+    rawFilters?: TransactionsFilters,
+    pagination?: ApiPagination,
+  ): Promise<[TransactionModel[], number]> {
+    const filters = this.resolveFilters(userId, rawFilters);
+    const orderBy = pagination?.sort?.map((sort: ApiPaginationSortOrder) => ({
+      [sort.field]: sort.order,
+    }));
+    const [transactions, count] = await prisma.transaction.findManyAndCount({
       include: {
         account: true,
         category: true,
         transferTransaction: true,
       },
-      where: {
-        ignore: { not: true },
-        OR: [
-          {
-            date: {
-              lt: date.toISOString(),
-            },
-            paymentMethod: PrismaEnum.PaymentMethodEnum.ACCOUNT,
-          },
-          {
-            billingDate: {
-              lt: addMonths(date, 1).toISOString(),
-            },
-            paymentMethod: PrismaEnum.PaymentMethodEnum.CREDIT_CARD,
-          },
-        ],
-        userId,
-      },
+      orderBy,
+      skip: pagination?.skip,
+      take: pagination?.take,
+      where: filters,
     });
 
-    return plainToInstance(TransactionModel, records);
+    return [plainToInstance(TransactionModel, transactions), count];
+  }
+
+  static resolveFilters(
+    userId: number,
+    rawFilters?: TransactionQueryRawFilters,
+  ): Prisma.TransactionWhereInput {
+    const filters: Prisma.TransactionWhereInput = {
+      accountId: rawFilters?.accountId,
+      category: rawFilters?.placeholderOnly
+        ? { name: 'Placeholder' }
+        : undefined,
+      OR: rawFilters?.or?.map((or: TransactionQueryRawFilters) =>
+        this.resolveFilters(userId, or),
+      ),
+      paymentMethod: rawFilters?.paymentMethod
+        ? { in: rawFilters.paymentMethod }
+        : undefined,
+      repeatId: rawFilters?.repeatOnly ? { not: null } : undefined,
+      type: rawFilters?.type ? { in: rawFilters.type } : undefined,
+      userId,
+    };
+
+    if (rawFilters?.placeholderOnly) filters.category = { name: 'Placeholder' };
+
+    if (rawFilters?.startDate && rawFilters?.endDate)
+      filters.date = {
+        gte: rawFilters.startDate.toISOString(),
+        lte: rawFilters.endDate.toISOString(),
+      };
+
+    if (rawFilters?.billableStartDate && rawFilters?.billableEndDate)
+      filters.billingDate = {
+        gte: rawFilters.billableStartDate.toISOString(),
+        lte: rawFilters.billableEndDate.toISOString(),
+      };
+
+    return filters;
   }
 }

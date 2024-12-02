@@ -1,5 +1,5 @@
-import { Transform } from "class-transformer";
-import { IsDate } from "class-validator";
+import { Transform } from 'class-transformer';
+import { IsDate } from 'class-validator';
 
 export interface AccountBalance {
   balance: number;
@@ -8,13 +8,28 @@ export interface AccountBalance {
 }
 
 export interface BalanceBiDto {
-  accounts: AccountBalance[];
+  accountsBalance: AccountBalance[];
+  accountsExpense: number;
+  accountsIncome: number;
   balance: number;
-  creditCards: AccountBalance[];
-  currMonthBalance: number;
-  currMonthExpense: number;
-  currMonthIncome: number;
-  prevMonthBalance: number;
+  billableBalance: number;
+  billableCreditCardsBalance: AccountBalance[];
+  billableCreditCardsExpense: number;
+  creditCardsBalance: AccountBalance[];
+  creditCardsExpense: number;
+  prevMonthBalanceBi: Pick<
+    BalanceBiDto,
+    | 'balance'
+    | 'billableBalance'
+    | 'totalBillableExpense'
+    | 'totalBillableIncome'
+    | 'totalExpense'
+    | 'totalIncome'
+  >;
+  totalBillableExpense: number;
+  totalBillableIncome: number;
+  totalExpense: number;
+  totalIncome: number;
 }
 
 export class BiGetBalanceBiParamsDto {

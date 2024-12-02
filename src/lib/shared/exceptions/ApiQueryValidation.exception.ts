@@ -5,7 +5,7 @@ export class ApiQueryValidationException extends Error {
     const message =
       errors && errors?.length
         ? errors?.map((error: ValidationError) => error.toString()).join('; ')
-        : 'Invalid body';
+        : 'Invalid query';
     super(message);
     this.name = 'ApiQueryValidationException';
   }

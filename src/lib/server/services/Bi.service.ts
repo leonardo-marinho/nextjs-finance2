@@ -4,15 +4,14 @@ import {
   BalanceBiDto,
 } from '@/lib/shared/dtos/BiGetBalanceBi.dto';
 import { TransactionModel } from '@/lib/shared/models/Transaction.model';
-import {
-  $Enums as PrismaEnums,
-  Transaction as TransactionPrismaModel,
-} from '@prisma/client';
+import { addDays, lastDayOfMonth } from '@/lib/shared/utils/Date.utils';
+import { $Enums as PrismaEnums } from '@prisma/client';
+import { pick } from 'lodash';
 
 export class BiService {
   static getAccountsBalance(
     transactions: TransactionModel[],
-    filter: (transaction: TransactionModel) => boolean,
+    filter: (transaction: TransactionModel) => boolean = () => true,
   ): AccountBalance[] {
     const balanceMap = transactions.reduce(
       (map: Map<number, AccountBalance>, transaction: TransactionModel) => {
@@ -40,92 +39,138 @@ export class BiService {
     );
   }
 
-  static async getBalanceBi(date: Date, userId: number): Promise<BalanceBiDto> {
-    const [currMonthTransactions, prevMonthTransactions] =
-      await this.getTransactions(date, userId);
+  static async getBalanceBi(
+    userId: number,
+    startDate: Date,
+    endDate: Date,
+    skipPrevMonth: boolean = false,
+  ): Promise<BalanceBiDto> {
+    let prevMonthBalanceBi: BalanceBiDto['prevMonthBalanceBi'] | null =
+      skipPrevMonth
+        ? null
+        : pick(
+            await this.getBalanceBi(
+              userId,
+              new Date(0),
+              addDays(startDate, -1),
+              true,
+            ),
+            [
+              'balance',
+              'billableBalance',
+              'totalBillableExpense',
+              'totalBillableIncome',
+              'totalExpense',
+              'totalIncome',
+            ],
+          );
+
+    const accountsTransactions: TransactionModel[] =
+      await TransactionService.getTransactions(userId, {
+        endDate,
+        paymentMethod: [PrismaEnums.PaymentMethodEnum.ACCOUNT],
+        startDate,
+      });
+
+    const currMonthCreditCardsTransactions: TransactionModel[] =
+      await TransactionService.getTransactions(userId, {
+        endDate,
+        paymentMethod: [PrismaEnums.PaymentMethodEnum.CREDIT_CARD],
+        startDate,
+      });
+
+    const billableCreditCardsTransactions: TransactionModel[] =
+      await TransactionService.getTransactions(userId, {
+        billableEndDate: endDate,
+        billableStartDate: startDate,
+        paymentMethod: [PrismaEnums.PaymentMethodEnum.CREDIT_CARD],
+      });
+
+    const accountsBalance: AccountBalance[] =
+      this.getAccountsBalance(accountsTransactions);
+
+    const billableCreditCardsBalance: AccountBalance[] =
+      this.getAccountsBalance(billableCreditCardsTransactions);
 
     const creditCardsBalance: AccountBalance[] = this.getAccountsBalance(
-      currMonthTransactions,
-      (transaction: TransactionModel) => transaction.isCreditCardTransaction(),
-    );
-    const bankAccountsBalance: AccountBalance[] = this.getAccountsBalance(
-      currMonthTransactions,
-      (transaction: TransactionModel) => !transaction.isCreditCardTransaction(),
+      currMonthCreditCardsTransactions,
     );
 
-    const firstDayOfCurrMonth: Date = new Date(
-      date.getFullYear(),
-      date.getMonth(),
-    );
-    const prevMonthBalance: number = this.sumAccountsBalance(
+    const accountsExpense = this.sumAccountsBalance(
       this.getAccountsBalance(
-        prevMonthTransactions,
-        (transaction: TransactionPrismaModel) => {
-          if (
-            transaction.paymentMethod !==
-              PrismaEnums.PaymentMethodEnum.CREDIT_CARD ||
-            !transaction.billingDate
-          )
-            return true;
-
-          return transaction.billingDate < firstDayOfCurrMonth;
-        },
+        accountsTransactions,
+        (transaction: TransactionModel) => transaction.isExpense(),
       ),
     );
-    const currMonthIncome: number = this.sumAccountsBalance(
+
+    const accountsIncome = this.sumAccountsBalance(
       this.getAccountsBalance(
-        currMonthTransactions,
+        accountsTransactions,
         (transaction: TransactionModel) => transaction.isIncome(),
       ),
     );
-    const currMonthExpense: number = this.sumAccountsBalance([
-      ...this.getAccountsBalance(
-        currMonthTransactions,
-        (transaction: TransactionModel) =>
-          transaction.isExpense() && !transaction.isCreditCardTransaction(),
+
+    const billableCreditCardsExpense = this.sumAccountsBalance(
+      this.getAccountsBalance(
+        billableCreditCardsTransactions,
+        (transaction: TransactionModel) => transaction.isExpense(),
       ),
-      ...this.getAccountsBalance(
-        prevMonthTransactions,
-        (transaction: TransactionModel) =>
-          transaction.isExpense() && transaction.isCreditCardTransaction(),
+    );
+
+    const creditCardsExpense = this.sumAccountsBalance(
+      this.getAccountsBalance(
+        currMonthCreditCardsTransactions,
+        (transaction: TransactionModel) => transaction.isExpense(),
       ),
-    ]);
-    const currMonthBalance: number =
-      prevMonthBalance + currMonthIncome + currMonthExpense;
+    );
+
+    const totalExpense = accountsExpense + creditCardsExpense;
+    const totalIncome = accountsIncome;
+
+    const totalBillableExpense = accountsExpense + billableCreditCardsExpense;
+    const totalBillableIncome = accountsIncome;
+
+    let balance = totalIncome + totalExpense;
+    let billableBalance = totalBillableIncome + totalBillableExpense;
+
+    if (prevMonthBalanceBi) {
+      balance = prevMonthBalanceBi.balance + balance;
+      billableBalance = prevMonthBalanceBi.billableBalance + billableBalance;
+    }
 
     return {
-      accounts: bankAccountsBalance,
-      creditCards: creditCardsBalance,
-      currMonthBalance,
-      currMonthExpense,
-      currMonthIncome,
-      prevMonthBalance,
+      accountsBalance,
+      accountsExpense,
+      accountsIncome,
+      balance,
+      billableBalance,
+      billableCreditCardsBalance,
+      billableCreditCardsExpense,
+      creditCardsBalance,
+      creditCardsExpense,
+      prevMonthBalanceBi,
+      totalBillableExpense,
+      totalBillableIncome,
+      totalExpense,
+      totalIncome,
     } as BalanceBiDto;
   }
 
-  static async getTransactions(
-    date: Date,
-    userId: number,
-  ): Promise<[TransactionModel[], TransactionModel[]]> {
-    const resetDate: Date = new Date(date);
-    resetDate.setHours(0, 0, 0, 0);
+  static async getMonthBalance(date: Date, userId: number): Promise<number> {
+    const startMonthDate = new Date(date.getFullYear(), date.getMonth());
+    const endMonthDate = lastDayOfMonth(startMonthDate);
 
-    const currMonthTransactions: TransactionPrismaModel[] =
-      await TransactionService.getTransactionsByMonth(date, userId);
-    const firstDayOfCurrMonth: Date = new Date(
-      date.getFullYear(),
-      date.getMonth(),
+    const transactions: TransactionModel[] =
+      await TransactionService.getTransactions(userId, {
+        endDate: endMonthDate,
+        startDate: startMonthDate,
+      });
+
+    return transactions.reduce(
+      (balance: number, transaction: TransactionModel) =>
+        balance + transaction.amount,
+      0,
     );
-    const prevMonthTransactions: TransactionPrismaModel[] =
-      await TransactionService.getTransactionsUntilDate(
-        firstDayOfCurrMonth,
-        userId,
-      );
-
-    return [currMonthTransactions, prevMonthTransactions] as [
-      TransactionModel[],
-      TransactionModel[],
-    ];
   }
 
   static sumAccountsBalance(accounts: AccountBalance[]): number {

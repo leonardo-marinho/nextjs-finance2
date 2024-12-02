@@ -15,6 +15,13 @@ export const getStartEndDatesByYear = (year: number): [Date, Date] => {
   return [startDate, endDate];
 };
 
+export const addDays = (date: Date, days: number): Date => {
+  const newDate = new Date(date);
+  newDate.setDate(newDate.getDate() + days);
+
+  return newDate;
+};
+
 export const addMonths = (date: Date, months: number): Date => {
   const newDate = new Date(date);
   newDate.setMonth(newDate.getMonth() + months);
@@ -25,6 +32,14 @@ export const addMonths = (date: Date, months: number): Date => {
 export const addWeeks = (date: Date, weeks: number): Date => {
   const newDate = new Date(date);
   newDate.setDate(newDate.getDate() + weeks * 7);
+
+  return newDate;
+};
+
+export const lastDayOfMonth = (date: Date): Date => {
+  const newDate = new Date(date);
+  newDate.setMonth(newDate.getMonth() + 1);
+  newDate.setDate(0);
 
   return newDate;
 };

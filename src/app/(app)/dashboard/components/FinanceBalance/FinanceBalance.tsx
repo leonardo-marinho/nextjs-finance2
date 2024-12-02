@@ -1,7 +1,10 @@
 'use client';
 
 import { FinanceBalanceAccountCard } from '@/app/(app)/dashboard/components/FinanceBalance/FinanceBalanceAccountCard';
-import { AccountBalance } from '@/lib/shared/dtos/BiGetBalanceBi.dto';
+import {
+  AccountBalance,
+  BalanceBiDto,
+} from '@/lib/shared/dtos/BiGetBalanceBi.dto';
 import { BalanceAmount } from '@/lib/ui/components/BalanceAmount';
 import {
   Card,
@@ -23,7 +26,7 @@ import React from 'react';
 export const FinanceBalance = (): JSX.Element => {
   const { financeListFilters } = useDashboard();
   const { balanceBiQuery } = useDashboard();
-  const data = balanceBiQuery?.data;
+  const data: BalanceBiDto = balanceBiQuery?.data;
   const isLoading = balanceBiQuery?.loading;
 
   return (
@@ -44,16 +47,16 @@ export const FinanceBalance = (): JSX.Element => {
                   Prev Month Balance
                 </p>
                 <BalanceAmount
-                  amount={data.prevMonthBalance}
+                  amount={data.prevMonthBalanceBi.billableBalance}
                   className="text-lg font-semibold"
                 />
               </div>
               <div>
                 <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                  Current Balance
+                  End Month Balance
                 </p>
                 <BalanceAmount
-                  amount={data.currMonthBalance}
+                  amount={data.billableBalance}
                   className="text-lg font-semibold"
                 />
               </div>
@@ -62,7 +65,7 @@ export const FinanceBalance = (): JSX.Element => {
                   Total Incoming
                 </p>
                 <BalanceAmount
-                  amount={data.currMonthIncome}
+                  amount={data.totalBillableIncome}
                   className="text-lg font-semibold"
                 />
               </div>
@@ -71,15 +74,33 @@ export const FinanceBalance = (): JSX.Element => {
                   Total Expenses
                 </p>
                 <BalanceAmount
-                  amount={data.currMonthExpense}
+                  amount={data.totalBillableExpense}
+                  className="text-lg font-semibold"
+                />
+              </div>
+              <div>
+                <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                  Credit Card Expenses
+                </p>
+                <BalanceAmount
+                  amount={data.creditCardsExpense}
+                  className="text-lg font-semibold"
+                />
+              </div>
+              <div>
+                <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                  Credit Card Bill
+                </p>
+                <BalanceAmount
+                  amount={data.billableCreditCardsExpense}
                   className="text-lg font-semibold"
                 />
               </div>
             </div>
             <Tabs
               defaultValue={
-                financeListFilters?.paymentMethod?.length === 1 &&
-                financeListFilters?.paymentMethod?.includes(
+                financeListFilters?.filters?.paymentMethod?.length === 1 &&
+                financeListFilters?.filters?.paymentMethod?.includes(
                   PrismaEnum.PaymentMethodEnum.CREDIT_CARD,
                 )
                   ? 'credit-cards'
@@ -88,11 +109,13 @@ export const FinanceBalance = (): JSX.Element => {
             >
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="accounts">Accounts</TabsTrigger>
-                <TabsTrigger value="credit-cards">Credit Cards</TabsTrigger>
+                <TabsTrigger value="credit-cards">
+                  Credit Cards Bill
+                </TabsTrigger>
               </TabsList>
               <TabsContent value="accounts">
                 <div className="space-y-4">
-                  {data.accounts.map((account: AccountBalance) => (
+                  {data.accountsBalance.map((account: AccountBalance) => (
                     <FinanceBalanceAccountCard
                       account={account}
                       key={account.id}
@@ -102,13 +125,15 @@ export const FinanceBalance = (): JSX.Element => {
               </TabsContent>
               <TabsContent value="credit-cards">
                 <div className="space-y-4">
-                  {data.creditCards.map((account: AccountBalance) => (
-                    <FinanceBalanceAccountCard
-                      account={account}
-                      isCreditCard
-                      key={account.id}
-                    />
-                  ))}
+                  {data.billableCreditCardsBalance.map(
+                    (account: AccountBalance) => (
+                      <FinanceBalanceAccountCard
+                        account={account}
+                        isCreditCard
+                        key={account.id}
+                      />
+                    ),
+                  )}
                 </div>
               </TabsContent>
             </Tabs>

@@ -1,19 +1,19 @@
+import { TransactionQueryRawFilters } from '@/lib/server/services/Transaction.service';
 import { ApiPaginationParamsDto } from '@/lib/shared/dtos/ApiPaginationParams.dto';
 import { Prisma, $Enums as PrismaEnums } from '@prisma/client';
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   IsArray,
   IsBoolean,
   IsDate,
   IsEnum,
-  IsIn,
   IsNumber,
   IsOptional,
-  IsString,
   ValidateIf,
+  ValidateNested,
 } from 'class-validator';
 
-export class GetTransactionsParamsDto extends ApiPaginationParamsDto {
+export class TransactionsFilters implements TransactionQueryRawFilters {
   @IsOptional()
   @Transform(({ value }: { value: string }) => Number(value))
   @IsNumber()
@@ -22,43 +22,63 @@ export class GetTransactionsParamsDto extends ApiPaginationParamsDto {
   @IsOptional()
   @IsDate()
   @Transform(({ value }: { value: string }) => new Date(value))
-  @ValidateIf((args: GetTransactionsParamsDto) => args.startDate !== undefined)
+  @ValidateIf(
+    (args: TransactionsFilters) => args.billableStartDate !== undefined,
+  )
+  billableEndDate?: Date;
+
+  @IsOptional()
+  @IsDate()
+  @Transform(({ value }: { value: string }) => new Date(value))
+  @ValidateIf((args: TransactionsFilters) => args.billableEndDate !== undefined)
+  billableStartDate?: Date;
+
+  @IsOptional()
+  @IsDate()
+  @Transform(({ value }: { value: string }) => new Date(value))
+  @ValidateIf((args: TransactionsFilters) => args.startDate !== undefined)
   endDate?: Date;
 
   @IsOptional()
-  @Transform(({ value }: { value: string }) => value.split(','))
-  @IsArray()
-  @IsEnum(PrismaEnums.PaymentMethodEnum, { each: true })
-  paymentMethod?: PrismaEnums.PaymentMethodEnum[] = [];
+  @Transform(({ value }: { value: string }) => Number(value))
+  @IsNumber()
+  id?: number;
 
   @IsOptional()
-  @Transform(({ value }: { value: string }) =>
-    value === 'true' ? true : false,
-  )
+  @IsArray()
+  @Type(() => TransactionsFilters)
+  or?: TransactionsFilters[];
+
+  @IsOptional()
+  @IsArray()
+  @IsEnum(PrismaEnums.PaymentMethodEnum, { each: true })
+  paymentMethod?: PrismaEnums.PaymentMethodEnum[];
+
+  @IsOptional()
   @IsBoolean()
   placeholderOnly?: boolean;
 
   @IsOptional()
   @IsBoolean()
-  @Transform(({ value }: { value: string }) =>
-    value === 'true' ? true : false,
-  )
   repeatOnly?: boolean;
-
-  @IsOptional()
-  @IsString()
-  @IsIn(Object.values(Prisma.SortOrder))
-  sortOrder?: Prisma.SortOrder = Prisma.SortOrder.desc;
 
   @IsOptional()
   @IsDate()
   @Transform(({ value }: { value: string }) => new Date(value))
-  @ValidateIf((args: GetTransactionsParamsDto) => args.endDate !== undefined)
+  @ValidateIf((args: TransactionsFilters) => args.endDate !== undefined)
   startDate?: Date;
 
   @IsOptional()
-  @Transform(({ value }: { value: string }) => value.split(','))
   @IsArray()
   @IsEnum(PrismaEnums.TransactionTypeEnum, { each: true })
-  type?: PrismaEnums.TransactionTypeEnum[] = [];
+  type?: PrismaEnums.TransactionTypeEnum[];
+}
+
+export class GetTransactionsParamsDto extends ApiPaginationParamsDto<
+  keyof Prisma.TransactionOrderByWithRelationInput
+> {
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => TransactionsFilters)
+  filters?: TransactionsFilters;
 }

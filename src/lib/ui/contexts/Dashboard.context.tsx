@@ -1,5 +1,8 @@
 'use client';
-import { GetTransactionsParamsDto } from '@/lib/shared/dtos/GetTransactionsParams.dto';
+import {
+  GetTransactionsParamsDto,
+  TransactionsFilters,
+} from '@/lib/shared/dtos/GetTransactionsParams.dto';
 import { getStartEndDatesByMonth } from '@/lib/shared/utils/Date.utils';
 import { useApi } from '@/lib/ui/hooks/useApi';
 import BiApiService from '@/lib/ui/services/BiApi.service';
@@ -11,19 +14,43 @@ import React, {
   SetStateAction,
   useCallback,
   useEffect,
+  useMemo,
   useState,
 } from 'react';
 
-const DEFAULT_FILTERS: GetTransactionsParamsDto = {
-  paymentMethod: [
-    PrismaEnums.PaymentMethodEnum.CREDIT_CARD,
-    PrismaEnums.PaymentMethodEnum.ACCOUNT,
+export const DEFAULT_ACCOUNT_PAYMENT_METHOD_FILTER = (
+  startDate?: Date,
+  endDate?: Date,
+): TransactionsFilters =>
+  ({
+    endDate,
+    paymentMethod: [PrismaEnums.PaymentMethodEnum.ACCOUNT],
+    startDate,
+  }) as TransactionsFilters;
+
+export const DEFAULT_CREDIT_CARD_PAYMENT_METHOD_FILTER = (
+  startDate?: Date,
+  endDate?: Date,
+): TransactionsFilters =>
+  ({
+    billableEndDate: endDate,
+    billableStartDate: startDate,
+    paymentMethod: [PrismaEnums.PaymentMethodEnum.CREDIT_CARD],
+  }) as TransactionsFilters;
+
+const DEFAULT_FILTERS = (
+  startDate?: Date,
+  endDate?: Date,
+): TransactionsFilters => ({
+  or: [
+    DEFAULT_ACCOUNT_PAYMENT_METHOD_FILTER(startDate, endDate),
+    DEFAULT_CREDIT_CARD_PAYMENT_METHOD_FILTER(startDate, endDate),
   ],
   type: [
     PrismaEnums.TransactionTypeEnum.EXPENSE,
     PrismaEnums.TransactionTypeEnum.INCOME,
   ],
-};
+});
 
 export interface DashboardContextData {
   balanceBiQuery: null | ReturnType<
@@ -31,29 +58,45 @@ export interface DashboardContextData {
     typeof useApi<typeof BiApiService.getBalanceBi>
   >;
   currDate: Date;
-  financeListFilters: GetTransactionsParamsDto | null;
+  endDate: Date | undefined;
+  financeListFilters: GetTransactionsParamsDto['filters'];
+  financeListPagination: GetTransactionsParamsDto['pagination'];
   hasFilters?: boolean;
   reloadDashboardData: () => void;
   resetFilters: () => void;
-  resetListFilters: (startDate?: Date, endDate?: Date) => void;
+  resetListFilters: () => void;
+  resetListPagination: () => void;
+  resetPagination: () => void;
+  startDate: Date | undefined;
   transactionsQuery: null | ReturnType<
     typeof useApi<typeof TransactionApiService.getTransactions>
   >;
   updateFinanceListFilters: (
-    filters: SetStateAction<GetTransactionsParamsDto>,
+    filters: SetStateAction<GetTransactionsParamsDto['filters']>,
   ) => void;
+  updateFinanceListPagination: (
+    pagination: GetTransactionsParamsDto['pagination'],
+  ) => void;
+  updateRefDate: (date: Date) => void;
 }
 
 export const DashboardContext = createContext<DashboardContextData>({
   balanceBiQuery: null,
   currDate: new Date(),
-  financeListFilters: null,
+  endDate: undefined,
+  financeListFilters: undefined,
+  financeListPagination: undefined,
   hasFilters: false,
   reloadDashboardData: noop,
   resetFilters: noop,
   resetListFilters: noop,
+  resetListPagination: noop,
+  resetPagination: noop,
+  startDate: undefined,
   transactionsQuery: null,
   updateFinanceListFilters: noop,
+  updateFinanceListPagination: noop,
+  updateRefDate: noop,
 });
 
 interface DashboardProviderProps extends React.PropsWithChildren {}
@@ -62,14 +105,23 @@ export const DashboardProvider = ({
   children,
 }: DashboardProviderProps): JSX.Element => {
   const [currDate] = useState(new Date());
+  const [refDate, setRefDate] = useState<Date>(currDate);
   const [hasFilters, setHasFilters] = useState<boolean>(false);
   const [transactionsFilters, setTransactionsFilters] =
-    useState<GetTransactionsParamsDto>();
+    useState<GetTransactionsParamsDto['filters']>();
+  const [transactionsPagination, setTransactionsPagination] =
+    useState<GetTransactionsParamsDto['pagination']>();
+
+  const [startDate, endDate] = useMemo(
+    () =>
+      getStartEndDatesByMonth(refDate.getMonth() + 1, refDate.getFullYear()),
+    [refDate],
+  );
 
   const balanceBiQuery = useApi({
     fn: () =>
       BiApiService.getBalanceBi({
-        date: transactionsFilters?.endDate || currDate,
+        date: refDate,
       }),
     options: {
       lazy: true,
@@ -77,7 +129,11 @@ export const DashboardProvider = ({
   });
 
   const transactionsQuery = useApi({
-    fn: () => TransactionApiService.getTransactions(transactionsFilters),
+    fn: () =>
+      TransactionApiService.getTransactions({
+        filters: transactionsFilters,
+        pagination: transactionsPagination,
+      }),
     options: {
       lazy: true,
     },
@@ -85,14 +141,19 @@ export const DashboardProvider = ({
 
   useEffect(() => {
     resetFilters();
+    resetListPagination();
     balanceBiQuery.request({} as never);
   }, []);
+
+  useEffect(() => {
+    updateFinanceListFilters(DEFAULT_FILTERS(startDate, endDate));
+  }, [startDate, endDate]);
 
   useEffect(() => {
     if (!transactionsFilters) return;
 
     reloadDashboardData();
-  }, [transactionsFilters]);
+  }, [transactionsFilters, transactionsPagination]);
 
   const reloadDashboardData = (): void => {
     balanceBiQuery.request({} as never);
@@ -100,9 +161,9 @@ export const DashboardProvider = ({
   };
 
   const updateFinanceListFilters = (
-    filters: SetStateAction<GetTransactionsParamsDto>,
+    filters: SetStateAction<typeof transactionsFilters>,
   ): void => {
-    const newFilters: GetTransactionsParamsDto = {
+    const newFilters: typeof transactionsFilters = {
       ...transactionsFilters,
       ...filters,
     };
@@ -110,22 +171,51 @@ export const DashboardProvider = ({
     setHasFilters(true);
   };
 
-  const resetListFilters = (startDate?: Date, endDate?: Date): void => {
+  const resetListFilters = (): void => {
     setHasFilters(false);
     setTransactionsFilters({
-      endDate: endDate || transactionsFilters?.endDate,
-      startDate: startDate || transactionsFilters?.startDate,
-      ...DEFAULT_FILTERS,
+      ...DEFAULT_FILTERS(startDate, endDate),
+    });
+  };
+
+  const updateFinanceListPagination = (
+    pagination: typeof transactionsPagination,
+  ): void => {
+    if (pagination?.sort) {
+      pagination.sort = [
+        ...pagination.sort,
+        ...(transactionsPagination?.sort || []),
+      ];
+    }
+
+    setTransactionsPagination({
+      ...transactionsPagination,
+      ...pagination,
+    });
+  };
+
+  const resetListPagination = (): void => {
+    setTransactionsPagination({
+      sort: [
+        {
+          field: 'date',
+          order: 'desc',
+        },
+        {
+          field: 'createdAt',
+          order: 'desc',
+        },
+      ],
     });
   };
 
   const resetFilters = useCallback(() => {
-    const [startDate, endDate] = getStartEndDatesByMonth(
-      currDate.getMonth() + 1,
-      currDate.getFullYear(),
-    );
-    resetListFilters(startDate, endDate);
+    resetListFilters();
   }, [currDate]);
+
+  const updateRefDate = (date: Date): void => {
+    setRefDate(date);
+  };
 
   return (
     <DashboardContext.Provider
@@ -133,13 +223,19 @@ export const DashboardProvider = ({
         // @ts-expect-error - required to be fixed
         balanceBiQuery,
         currDate,
-        financeListFilters: transactionsFilters || null,
+        endDate,
+        financeListFilters: transactionsFilters,
+        financeListPagination: transactionsPagination,
         hasFilters,
         reloadDashboardData,
         resetFilters,
         resetListFilters,
+        resetListPagination,
+        startDate,
         transactionsQuery,
         updateFinanceListFilters,
+        updateFinanceListPagination,
+        updateRefDate,
       }}
     >
       {children}
