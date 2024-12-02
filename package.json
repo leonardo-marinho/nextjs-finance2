@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbo",
-    "build": "next build",
-    "start": "next start",
+    "dev": "NODE_OPTIONS='--require reflect-metadata' next dev --turbo",
+    "build": "NODE_OPTIONS='--require reflect-metadata' next build",
+    "start": "NODE_OPTIONS='--require reflect-metadata' next start",
     "lint": "next lint --fix --max-warnings=0",
     "lint:check": "next lint --max-warnings=0",
     "format": "prettier --write --ignore-path .gitignore .",
