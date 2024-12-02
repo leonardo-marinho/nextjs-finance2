@@ -41,6 +41,12 @@ export class FinanceTrackerController {
       userId,
     };
 
+    if (
+      body.paymentMethod === PrismaEnums.PaymentMethodEnum.CREDIT_CARD &&
+      !body.billingDate
+    )
+      throw new Error('Billing date is required for credit card transactions');
+
     if (body.repeatType !== PrismaEnums.TransactionRepeatEnum.NONE)
       FinanceTrackerService.createRepeatTransaction(data, body);
     else await prisma.transaction.create({ data });

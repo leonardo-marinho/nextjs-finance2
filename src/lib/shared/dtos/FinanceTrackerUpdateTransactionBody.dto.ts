@@ -10,6 +10,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  Min,
   ValidateIf,
 } from 'class-validator';
 
@@ -20,6 +21,7 @@ export class FinanceTrackerUpdateTransactionBody
   accountId: number;
 
   @IsNumber()
+  @Min(0.01)
   amount: number;
 
   @IsOptional()
