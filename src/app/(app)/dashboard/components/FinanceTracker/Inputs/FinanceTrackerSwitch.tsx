@@ -9,9 +9,9 @@ interface FinanceTrackerSwitchProps
 }
 
 export const FinanceTrackerSwitch = ({
-  label,
   name,
   id: inputId = name,
+  label,
   onChange,
   ...props
 }: FinanceTrackerSwitchProps): JSX.Element => (

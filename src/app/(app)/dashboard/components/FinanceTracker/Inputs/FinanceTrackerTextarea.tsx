@@ -9,9 +9,9 @@ interface FinanceTrackerTextareaProps
 }
 
 export const FinanceTrackerTextarea = ({
-  label,
   name,
   id: inputId = name,
+  label,
   onChange,
   ...props
 }: FinanceTrackerTextareaProps): JSX.Element => {

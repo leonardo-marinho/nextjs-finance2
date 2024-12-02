@@ -10,9 +10,9 @@ export interface FinanceTrackerInputProps
 }
 
 export const FinanceTrackerInput = ({
-  label,
   name,
   id: inputId = name,
+  label,
   onChange,
   type,
   ...props

@@ -22,10 +22,10 @@ interface FinanceTrackerSelectProps {
 export const FinanceTrackerSelect = ({
   data = [],
   defaultValue,
-  isDisabled,
-  label,
   name,
   id: inputId = name,
+  isDisabled,
+  label,
   onChange,
   placeholder,
 }: FinanceTrackerSelectProps): JSX.Element => {
