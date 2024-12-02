@@ -9,7 +9,7 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "sourceMap": true,
-    "target": "ESNext",
+    "target": "ES6",
     "resolveJsonModule": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
