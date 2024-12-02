@@ -15,7 +15,6 @@ import { ClassConstructor } from 'class-transformer';
 import { ValidationError } from 'class-validator';
 import { cookies } from 'next/headers';
 import { NextRequest } from 'next/server';
-import 'reflect-metadata';
 
 interface NextContext {
   params: Record<string, unknown>;
