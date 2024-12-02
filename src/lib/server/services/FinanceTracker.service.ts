@@ -20,7 +20,9 @@ export class FinanceTrackerService {
       (_: never, i: number) =>
         ({
           ...data,
-          date:
+          [body.paymentMethod === PrismaEnums.PaymentMethodEnum.CREDIT_CARD
+            ? 'billingDate'
+            : 'date']:
             body.repeatType === PrismaEnums.TransactionRepeatEnum.MONTHLY
               ? addMonths(body.date, i)
               : addWeeks(body.date, i),
