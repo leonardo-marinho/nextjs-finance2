@@ -8,7 +8,7 @@
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "bundler",
-    "target": "ES6",
+    "target": "ESNext",
     "resolveJsonModule": true,
     "experimentalDecorators": true,
     "strictPropertyInitialization": false,
