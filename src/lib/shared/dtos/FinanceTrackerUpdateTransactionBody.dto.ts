@@ -23,6 +23,7 @@ export class FinanceTrackerUpdateTransactionBody
   accountId: number;
 
   @IsNumber()
+  @Transform(({ value }: { value: number }) => Math.abs(value))
   @Min(0.01)
   amount: number;
 
