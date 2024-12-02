@@ -99,8 +99,8 @@ export const FinanceBalance = (): JSX.Element => {
             </div>
             <Tabs
               defaultValue={
-                financeListFilters?.filters?.paymentMethod?.length === 1 &&
-                financeListFilters?.filters?.paymentMethod?.includes(
+                financeListFilters?.paymentMethod?.length === 1 &&
+                financeListFilters?.paymentMethod?.includes(
                   PrismaEnum.PaymentMethodEnum.CREDIT_CARD,
                 )
                   ? 'credit-cards'

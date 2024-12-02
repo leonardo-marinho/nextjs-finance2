@@ -1,4 +1,3 @@
-import { ApiPagination } from '@/lib/shared/dtos/ApiPaginationParams.dto';
 import {
   GetTransactionsParamsDto,
   TransactionsFilters,
@@ -29,7 +28,9 @@ class TransactionApiService extends ApiService {
       params: {
         ...params,
         filters: JSON.stringify(params?.filters) as TransactionsFilters,
-        pagination: JSON.stringify(params?.pagination) as ApiPagination,
+        pagination: JSON.stringify(
+          params?.pagination,
+        ) as GetTransactionsParamsDto['pagination'],
       },
     });
 
