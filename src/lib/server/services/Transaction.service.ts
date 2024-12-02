@@ -85,14 +85,14 @@ export class TransactionService {
 
     if (rawFilters?.startDate && rawFilters?.endDate)
       filters.date = {
-        gte: rawFilters.startDate.toISOString(),
-        lte: rawFilters.endDate.toISOString(),
+        gte: new Date(rawFilters.startDate).toISOString(),
+        lte: new Date(rawFilters.endDate).toISOString(),
       };
 
     if (rawFilters?.billableStartDate && rawFilters?.billableEndDate)
       filters.billingDate = {
-        gte: rawFilters.billableStartDate.toISOString(),
-        lte: rawFilters.billableEndDate.toISOString(),
+        gte: new Date(rawFilters.billableStartDate).toISOString(),
+        lte: new Date(rawFilters.billableEndDate).toISOString(),
       };
 
     return filters;
