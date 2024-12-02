@@ -53,3 +53,6 @@ export const resetTime = (date: Date): Date => {
 
 export const getSelectValueDateString = (date: Date): string =>
   date.toISOString().split('T')[0];
+
+export const isValidDate = (date: Date): boolean =>
+  date instanceof Date && !isNaN(date.getTime());
