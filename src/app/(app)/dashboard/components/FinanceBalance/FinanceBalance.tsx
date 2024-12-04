@@ -101,10 +101,8 @@ export const FinanceBalance = (): JSX.Element => {
             </div>
             <Tabs onValueChange={handleTabChange} value={financeListTab}>
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="accounts">Accounts</TabsTrigger>
-                <TabsTrigger value="credit-cards">
-                  Credit Cards Bill
-                </TabsTrigger>
+                <TabsTrigger value="account">Accounts</TabsTrigger>
+                <TabsTrigger value="credit-card">Credit Cards Bill</TabsTrigger>
               </TabsList>
               <TabsContent value="account">
                 <div className="space-y-4">
