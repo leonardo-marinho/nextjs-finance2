@@ -78,7 +78,7 @@ export interface DashboardContextData {
   updateFinanceListPagination: (
     pagination: GetTransactionsParamsDto['pagination'],
   ) => void;
-  updateFinanceListTab: (tabName: PrismaEnums.TransactionTypeEnum) => void;
+  updateFinanceListTab: (tabName: string) => void;
   updateRefDate: (date: Date) => void;
 }
 

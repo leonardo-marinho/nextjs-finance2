@@ -14,7 +14,6 @@ import {
   TabsTrigger,
 } from '@/lib/ui/components/Tabs';
 import { useDashboard } from '@/lib/ui/hooks/useDashboard';
-import { $Enums as PrismaEnums } from '@prisma/client';
 import { Spinner, Theme } from '@radix-ui/themes';
 import React, { useMemo } from 'react';
 
@@ -41,7 +40,7 @@ export const FinanceList = (): JSX.Element => {
   );
 
   const handleTabChange = (tabName: string): void =>
-    updateFinanceListTab(tabName as PrismaEnums.TransactionTypeEnum);
+    updateFinanceListTab(tabName);
 
   const isLoading = transactionsQuery?.loading;
 

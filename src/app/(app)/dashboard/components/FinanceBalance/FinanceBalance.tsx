@@ -19,15 +19,17 @@ import {
   TabsTrigger,
 } from '@/lib/ui/components/Tabs';
 import { useDashboard } from '@/lib/ui/hooks/useDashboard';
-import { $Enums as PrismaEnum } from '@prisma/client';
 import { Spinner, Theme } from '@radix-ui/themes';
 import React from 'react';
 
 export const FinanceBalance = (): JSX.Element => {
-  const { financeListFilters } = useDashboard();
-  const { balanceBiQuery } = useDashboard();
+  const { balanceBiQuery, financeListTab, updateFinanceListTab } =
+    useDashboard();
   const data: BalanceBiDto = balanceBiQuery?.data;
   const isLoading = balanceBiQuery?.loading;
+
+  const handleTabChange = (tabName: string): void =>
+    updateFinanceListTab(tabName);
 
   return (
     <Card className="flex w-full flex-col lg:overflow-hidden">
@@ -97,23 +99,14 @@ export const FinanceBalance = (): JSX.Element => {
                 />
               </div>
             </div>
-            <Tabs
-              defaultValue={
-                financeListFilters?.paymentMethod?.length === 1 &&
-                financeListFilters?.paymentMethod?.includes(
-                  PrismaEnum.PaymentMethodEnum.CREDIT_CARD,
-                )
-                  ? 'credit-cards'
-                  : 'accounts'
-              }
-            >
+            <Tabs onValueChange={handleTabChange} value={financeListTab}>
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="accounts">Accounts</TabsTrigger>
                 <TabsTrigger value="credit-cards">
                   Credit Cards Bill
                 </TabsTrigger>
               </TabsList>
-              <TabsContent value="accounts">
+              <TabsContent value="account">
                 <div className="space-y-4">
                   {data.accountsBalance.map((account: AccountBalance) => (
                     <FinanceBalanceAccountCard
@@ -123,7 +116,7 @@ export const FinanceBalance = (): JSX.Element => {
                   ))}
                 </div>
               </TabsContent>
-              <TabsContent value="credit-cards">
+              <TabsContent value="credit-card">
                 <div className="space-y-4">
                   {data.billableCreditCardsBalance.map(
                     (account: AccountBalance) => (
