@@ -61,6 +61,7 @@ export interface DashboardContextData {
   endDate: Date | undefined;
   financeListFilters: GetTransactionsParamsDto['filters'];
   financeListPagination: GetTransactionsParamsDto['pagination'];
+  financeListTab: string;
   hasFilters?: boolean;
   reloadDashboardData: () => void;
   resetFilters: () => void;
@@ -77,6 +78,7 @@ export interface DashboardContextData {
   updateFinanceListPagination: (
     pagination: GetTransactionsParamsDto['pagination'],
   ) => void;
+  updateFinanceListTab: (tabName: PrismaEnums.TransactionTypeEnum) => void;
   updateRefDate: (date: Date) => void;
 }
 
@@ -86,6 +88,7 @@ export const DashboardContext = createContext<DashboardContextData>({
   endDate: undefined,
   financeListFilters: undefined,
   financeListPagination: undefined,
+  financeListTab: PrismaEnums.TransactionTypeEnum.EXPENSE,
   hasFilters: false,
   reloadDashboardData: noop,
   resetFilters: noop,
@@ -96,6 +99,7 @@ export const DashboardContext = createContext<DashboardContextData>({
   transactionsQuery: null,
   updateFinanceListFilters: noop,
   updateFinanceListPagination: noop,
+  updateFinanceListTab: noop,
   updateRefDate: noop,
 });
 
@@ -111,6 +115,9 @@ export const DashboardProvider = ({
     useState<GetTransactionsParamsDto['filters']>();
   const [transactionsPagination, setTransactionsPagination] =
     useState<GetTransactionsParamsDto['pagination']>();
+  const [financeListTab, setFinanceListTab] = useState<string>(
+    PrismaEnums.TransactionTypeEnum.EXPENSE,
+  );
 
   const [startDate, endDate] = useMemo(
     () =>
@@ -226,6 +233,7 @@ export const DashboardProvider = ({
         endDate,
         financeListFilters: transactionsFilters,
         financeListPagination: transactionsPagination,
+        financeListTab,
         hasFilters,
         reloadDashboardData,
         resetFilters,
@@ -235,6 +243,7 @@ export const DashboardProvider = ({
         transactionsQuery,
         updateFinanceListFilters,
         updateFinanceListPagination,
+        updateFinanceListTab: setFinanceListTab,
         updateRefDate,
       }}
     >

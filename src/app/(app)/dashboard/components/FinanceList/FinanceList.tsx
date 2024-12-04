@@ -14,11 +14,13 @@ import {
   TabsTrigger,
 } from '@/lib/ui/components/Tabs';
 import { useDashboard } from '@/lib/ui/hooks/useDashboard';
+import { $Enums as PrismaEnums } from '@prisma/client';
 import { Spinner, Theme } from '@radix-ui/themes';
 import React, { useMemo } from 'react';
 
 export const FinanceList = (): JSX.Element => {
-  const { transactionsQuery } = useDashboard();
+  const { financeListTab, transactionsQuery, updateFinanceListTab } =
+    useDashboard();
   const response = transactionsQuery?.data;
 
   const accountTransactions = useMemo(
@@ -38,6 +40,9 @@ export const FinanceList = (): JSX.Element => {
     [response?.data],
   );
 
+  const handleTabChange = (tabName: string): void =>
+    updateFinanceListTab(tabName as PrismaEnums.TransactionTypeEnum);
+
   const isLoading = transactionsQuery?.loading;
 
   return (
@@ -52,7 +57,7 @@ export const FinanceList = (): JSX.Element => {
             <Spinner size="3" />
           </Theme>
         ) : (
-          <Tabs defaultValue="account">
+          <Tabs onValueChange={handleTabChange} value={financeListTab}>
             <TabsList className="mb-6 grid w-full grid-cols-2">
               <TabsTrigger value={'account'}>
                 Account ({accountTransactions.length})
