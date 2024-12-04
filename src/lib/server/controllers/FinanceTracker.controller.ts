@@ -30,7 +30,6 @@ export class FinanceTrackerController {
         body.type === PrismaEnums.TransactionTypeEnum.EXPENSE
           ? -amount
           : amount,
-      billingDate: body.billingDate,
       categoryId: body.categoryId,
       date: body.date.toISOString(),
       ignore: body.ignore,
@@ -46,6 +45,7 @@ export class FinanceTrackerController {
         throw new Error(
           'Billing date is required for credit card transactions',
         );
+      else data.billingDate = body.billingDate;
 
       if (body.billingDate < body.date)
         throw new Error('Billing date cannot be before transaction date');
@@ -155,7 +155,6 @@ export class FinanceTrackerController {
         body.type === PrismaEnums.TransactionTypeEnum.EXPENSE
           ? -amount
           : amount,
-      billingDate: body.billingDate,
       categoryId: body.categoryId,
       date: body.date.toISOString(),
       ignore: body.ignore,
@@ -164,6 +163,17 @@ export class FinanceTrackerController {
       tags: FinanceTrackerService.trimTags(body.tags),
       type: body.type,
     };
+
+    if (body.paymentMethod === PrismaEnums.PaymentMethodEnum.CREDIT_CARD) {
+      if (!body.billingDate)
+        throw new Error(
+          'Billing date is required for credit card transactions',
+        );
+      else data.billingDate = body.billingDate;
+
+      if (body.billingDate < body.date)
+        throw new Error('Billing date cannot be before transaction date');
+    }
 
     const originalTransaction = await prisma.transaction.findUnique({
       where: {
