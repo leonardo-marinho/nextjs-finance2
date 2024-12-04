@@ -207,6 +207,13 @@ export const FinanceTrackerProvider = ({
     templateTransaction.categoryId = transaction.categoryId;
     templateTransaction.paymentMethod = transaction.paymentMethod;
     templateTransaction.tags = transaction.tags;
+
+    if (
+      transaction.paymentMethod === PrismaEnums.PaymentMethodEnum.CREDIT_CARD
+    ) {
+      templateTransaction.billingDate = transaction.billingDate;
+    }
+
     setTransaction(templateTransaction);
     setTab(templateTransaction.type);
     updateUI();
