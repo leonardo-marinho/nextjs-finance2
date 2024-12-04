@@ -88,7 +88,7 @@ export const DashboardContext = createContext<DashboardContextData>({
   endDate: undefined,
   financeListFilters: undefined,
   financeListPagination: undefined,
-  financeListTab: PrismaEnums.TransactionTypeEnum.EXPENSE,
+  financeListTab: 'account',
   hasFilters: false,
   reloadDashboardData: noop,
   resetFilters: noop,
@@ -115,9 +115,7 @@ export const DashboardProvider = ({
     useState<GetTransactionsParamsDto['filters']>();
   const [transactionsPagination, setTransactionsPagination] =
     useState<GetTransactionsParamsDto['pagination']>();
-  const [financeListTab, setFinanceListTab] = useState<string>(
-    PrismaEnums.TransactionTypeEnum.EXPENSE,
-  );
+  const [financeListTab, setFinanceListTab] = useState<string>('account');
 
   const [startDate, endDate] = useMemo(
     () =>
