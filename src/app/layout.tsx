@@ -14,7 +14,7 @@ const RootLayout = ({ children }: PropsWithChildren): JSX.Element => {
         <meta content="yes" name="mobile-web-app-capable" />
         <meta content="yes" name="apple-mobile-web-app-capable" />
         <link href="/app.webmanifest" rel="manifest" />
-        <title>My App</title>
+        <title>Léo Finanças</title>
       </Head>
       <body
         className={cn(
