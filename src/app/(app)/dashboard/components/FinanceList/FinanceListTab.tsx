@@ -8,8 +8,12 @@ interface FinanceListTabProps {
 }
 
 export const FinanceListTab = ({ data }: FinanceListTabProps): JSX.Element => {
-  const { cloneTransaction, deleteTransaction, editTransaction } =
-    useFinanceTracker();
+  const {
+    cloneTransaction,
+    deleteTransaction,
+    editTransaction,
+    updateTransaction,
+  } = useFinanceTracker();
 
   return (
     <div className="space-y-4">
@@ -40,6 +44,7 @@ export const FinanceListTab = ({ data }: FinanceListTabProps): JSX.Element => {
               deleteTransaction={deleteTransaction}
               editTransaction={editTransaction}
               transaction={transaction}
+              updateTransaction={updateTransaction}
             />
           </React.Fragment>
         ),

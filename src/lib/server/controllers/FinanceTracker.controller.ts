@@ -35,6 +35,7 @@ export class FinanceTrackerController {
       ignore: body.ignore,
       notes: body.notes,
       paymentMethod: body.paymentMethod,
+      status: body.status,
       tags: FinanceTrackerService.trimTags(body.tags),
       type: body.type,
       userId,
@@ -160,6 +161,7 @@ export class FinanceTrackerController {
       ignore: body.ignore,
       notes: body.notes,
       paymentMethod: body.paymentMethod,
+      status: body.status,
       tags: FinanceTrackerService.trimTags(body.tags),
       type: body.type,
     };

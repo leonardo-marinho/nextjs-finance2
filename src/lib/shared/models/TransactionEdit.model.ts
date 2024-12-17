@@ -10,7 +10,7 @@ export class TransactionEditModel extends TransactionModel {
   constructor(transaction?: TransactionEditModel | TransactionModel) {
     super();
     this.accountId = transaction?.accountId || 0;
-    this.amount = transaction?.amount || 0;
+    this.amount = Math.abs(transaction?.amount || 0);
     this.billingDate = transaction?.billingDate || null;
     this.categoryId = transaction?.categoryId || 0;
     this.date = transaction?.date || new Date();
@@ -27,5 +27,7 @@ export class TransactionEditModel extends TransactionModel {
       transaction?.paymentMethod || PrismaEnums.PaymentMethodEnum.ACCOUNT;
     this.tags = transaction?.tags || '';
     this.type = transaction?.type || PrismaEnums.TransactionTypeEnum.INCOME;
+    this.status =
+      transaction?.status || PrismaEnums.TransactionStatusEnum.PENDING;
   }
 }

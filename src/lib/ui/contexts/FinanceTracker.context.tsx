@@ -1,6 +1,7 @@
 'use client';
 import { financeTrackerTabs } from '@/app/(app)/dashboard/components/FinanceTracker/constants';
 import { FinanceTrackerOptionsDto } from '@/lib/shared/dtos/FinanceTrackerOptions.dto';
+import { FinanceTrackerUpdateTransactionBody } from '@/lib/shared/dtos/FinanceTrackerUpdateTransactionBody.dto';
 import { IdQueryDto } from '@/lib/shared/dtos/IdQuery.dto';
 import { TransactionModel } from '@/lib/shared/models/Transaction.model';
 import { TransactionEditModel } from '@/lib/shared/models/TransactionEdit.model';
@@ -16,6 +17,7 @@ import {
   TransactionCategory as TransactionCategoryPrismaModel,
   Transaction as TransactionPrismaModel,
 } from '@prisma/client';
+import { plainToClass } from 'class-transformer';
 import { noop } from 'lodash';
 import React, { createContext, useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -55,6 +57,7 @@ export interface FinanceTrackerContextData {
   tab: string;
   transaction: TransactionEditModel;
   updateTab: (tabName: PrismaEnums.TransactionTypeEnum) => void;
+  updateTransaction: (transaction: TransactionModel) => void;
 }
 
 export const FinanceTrackerContext = createContext<FinanceTrackerContextData>({
@@ -74,6 +77,7 @@ export const FinanceTrackerContext = createContext<FinanceTrackerContextData>({
   tab: financeTrackerTabs.INCOMING,
   transaction: new TransactionEditModel(),
   updateTab: noop,
+  updateTransaction: noop,
 });
 
 interface FinanceTrackerProviderProps extends React.PropsWithChildren {}
@@ -207,6 +211,7 @@ export const FinanceTrackerProvider = ({
     templateTransaction.categoryId = transaction.categoryId;
     templateTransaction.paymentMethod = transaction.paymentMethod;
     templateTransaction.tags = transaction.tags;
+    templateTransaction.status = transaction.status;
 
     if (
       transaction.paymentMethod === PrismaEnums.PaymentMethodEnum.CREDIT_CARD
@@ -244,6 +249,27 @@ export const FinanceTrackerProvider = ({
     } else toast.error('Transaction failed to delete');
   };
 
+  const updateTransaction = async (
+    transaction: TransactionModel,
+  ): Promise<void> => {
+    const response = (await toast.promise(
+      FinanceTrackerApiService.updateTransaction(
+        { id: transaction.id },
+        plainToClass(FinanceTrackerUpdateTransactionBody, transaction),
+      ),
+      {
+        pending: 'Updating transaction...',
+      },
+    )) as Awaited<
+      ReturnType<typeof FinanceTrackerApiService.updateTransaction>
+    >;
+
+    if (response.result) {
+      toast.success('Transaction updated successfully');
+      updateUI();
+    } else toast.error('Transaction failed to update');
+  };
+
   const updateTab = (type?: PrismaEnums.TransactionTypeEnum): void => {
     setTab(type || transaction.type);
     resetTransaction();
@@ -278,6 +304,7 @@ export const FinanceTrackerProvider = ({
         tab,
         transaction,
         updateTab,
+        updateTransaction,
       }}
     >
       {children}

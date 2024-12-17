@@ -5,8 +5,22 @@ import { Button } from '@/lib/ui/components/Button';
 import { Card, CardContent } from '@/lib/ui/components/Card';
 import { useFinanceTracker } from '@/lib/ui/hooks/useFinanceTracker';
 import { cn } from '@/lib/ui/utils/classnames';
-import { capitalize } from 'lodash';
-import { Copy, Info, Pencil, Trash2 } from 'lucide-react';
+import { $Enums as PrismaEnums } from '@prisma/client';
+import clsx from 'clsx';
+import { capitalize, update } from 'lodash';
+import {
+  Check,
+  Copy,
+  Divide,
+  Info,
+  Pencil,
+  SquareCheck,
+  SquareCheckBig,
+  SquareX,
+  Tally1,
+  Tally2,
+  Trash2,
+} from 'lucide-react';
 import React, { useState } from 'react';
 
 interface FinanceListCardProps
@@ -15,6 +29,7 @@ interface FinanceListCardProps
   deleteTransaction: ReturnType<typeof useFinanceTracker>['deleteTransaction'];
   editTransaction: ReturnType<typeof useFinanceTracker>['editTransaction'];
   transaction: TransactionModel;
+  updateTransaction: ReturnType<typeof useFinanceTracker>['updateTransaction'];
 }
 
 export const FinanceListCard = ({
@@ -22,6 +37,7 @@ export const FinanceListCard = ({
   deleteTransaction,
   editTransaction,
   transaction,
+  updateTransaction,
 }: FinanceListCardProps): JSX.Element => {
   const [isDeleteButtonFirstClick, setIsDeleteButtonFirstClick] =
     useState<boolean>(false);
@@ -40,6 +56,14 @@ export const FinanceListCard = ({
 
     deleteTransaction(transaction.id);
   };
+  const handleUpdateStatusClick = (
+    status: PrismaEnums.TransactionStatusEnum,
+  ): void => {
+    transaction.status = status;
+    updateTransaction(transaction);
+  };
+
+  const isPaid = transaction.status === PrismaEnums.TransactionStatusEnum.PAID;
 
   return (
     <div className="relative">
@@ -53,7 +77,12 @@ export const FinanceListCard = ({
       )}
       <Card className="group relative" tabIndex={0}>
         <CardContent className="p-4">
-          <div className="flex flex-col gap-1">
+          <div
+            className={clsx(
+              'flex flex-col gap-1 opacity-50',
+              isPaid && 'opacity-100',
+            )}
+          >
             <div className="flex items-center justify-between">
               <div className="flex flex-col">
                 <div className="flex items-center gap-2">
@@ -79,6 +108,15 @@ export const FinanceListCard = ({
                   })}
                 </span>
               )}
+              {isPaid ? (
+                <span className="inline-flex items-center rounded-md bg-green-500 px-2 py-1 text-xs font-medium text-white ring-1 ring-inset ring-blue-700/10">
+                  Paid
+                </span>
+              ) : (
+                <span className="inline-flex items-center rounded-md bg-orange-500 px-2 py-1 text-xs font-medium text-white ring-1 ring-inset ring-blue-700/10">
+                  Pending
+                </span>
+              )}
               {!!transaction.repeatId && (
                 <span className="inline-flex items-center rounded-md bg-red-500 px-2 py-1 text-xs font-medium text-white ring-1 ring-inset ring-blue-700/10">
                   Repeats
@@ -94,6 +132,24 @@ export const FinanceListCard = ({
             </div>
           </div>
           <div className="absolute right-2 top-2 rounded bg-gray-50 opacity-0 shadow transition-opacity group-focus-within:opacity-100 dark:bg-neutral-900 lg:group-hover:opacity-100">
+            <Button
+              className="size-10 lg:size-8"
+              onClick={() =>
+                handleUpdateStatusClick(
+                  isPaid
+                    ? PrismaEnums.TransactionStatusEnum.PENDING
+                    : PrismaEnums.TransactionStatusEnum.PAID,
+                )
+              }
+              size="icon"
+              variant="ghost"
+            >
+              {isPaid ? (
+                <SquareX className="size-6 lg:size-4" />
+              ) : (
+                <SquareCheckBig className="size-6 lg:size-4" />
+              )}
+            </Button>
             <Button
               className="size-10 lg:size-8"
               onClick={handleEditClick}

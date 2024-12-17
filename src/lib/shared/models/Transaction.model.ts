@@ -25,6 +25,7 @@ export class TransactionModel
   notes: null | string;
   paymentMethod: PrismaEnums.PaymentMethodEnum;
   repeatId: null | number;
+  status: PrismaEnums.TransactionStatusEnum;
   tags: null | string;
   type: PrismaEnums.TransactionTypeEnum;
 

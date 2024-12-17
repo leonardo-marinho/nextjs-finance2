@@ -16,6 +16,7 @@ export const FinanceTrackerInputNames: Record<
   NOTES: 'notes',
   PAYMENT_METHOD: 'paymentMethod',
   REPEAT_TYPE: 'repeatType',
+  STATUS: 'status',
   TAGS: 'tags',
   TRANSFER_ACCOUNT: 'transferAccountId',
 };

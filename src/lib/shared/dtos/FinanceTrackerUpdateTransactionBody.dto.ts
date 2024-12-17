@@ -66,6 +66,9 @@ export class FinanceTrackerUpdateTransactionBody
   @IsEnum(PrismaEnums.TransactionRepeatEnum)
   repeatType: PrismaEnums.TransactionRepeatEnum;
 
+  @IsEnum(PrismaEnums.TransactionStatusEnum)
+  status?: PrismaEnums.TransactionStatusEnum;
+
   @IsOptional()
   @IsString()
   tags?: null | string;

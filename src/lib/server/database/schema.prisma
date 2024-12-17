@@ -18,6 +18,11 @@ enum PaymentMethodEnum {
   CREDIT_CARD
 }
 
+enum TransactionStatusEnum {
+  PENDING
+  PAID
+}
+
 enum TransactionTypeEnum {
   EXPENSE
   INCOME
@@ -58,6 +63,7 @@ model Transaction {
   paymentMethod PaymentMethodEnum
   ignore        Boolean?
   billingDate   DateTime?  @db.Timestamp(0)
+  status        TransactionStatusEnum @default(PENDING)
 
   account    Account             @relation(fields: [accountId], references: [id])
   accountId  Int

@@ -21,6 +21,14 @@ export const FinanceTrackerSharedFooterInputs = (): JSX.Element => {
     setFieldValue(FinanceTrackerInputNames.IGNORE, value);
   const handleInstallmentsChange = (value: string): void =>
     setFieldValue(FinanceTrackerInputNames.INSTALLMENTS, Number(value));
+  const handleStatusChange = (value: boolean): void => {
+    setFieldValue(
+      FinanceTrackerInputNames.STATUS,
+      value
+        ? PrismaEnums.TransactionStatusEnum.PAID
+        : PrismaEnums.TransactionStatusEnum.PENDING,
+    );
+  };
 
   const disableInstallmentField = useMemo(
     () =>
@@ -63,12 +71,22 @@ export const FinanceTrackerSharedFooterInputs = (): JSX.Element => {
         onChange={handleNotesChange}
         placeholder="Enter notes"
       />
-      <FinanceTrackerSwitch
-        defaultChecked={!!transaction.ignore}
-        label="Ignore"
-        name={FinanceTrackerInputNames.IGNORE}
-        onChange={handleIgnoreChange}
-      />
+      <div className="flex gap-1">
+        <FinanceTrackerSwitch
+          defaultChecked={
+            transaction.status === PrismaEnums.TransactionStatusEnum.PAID
+          }
+          label="Paid"
+          name={FinanceTrackerInputNames.STATUS}
+          onChange={handleStatusChange}
+        />
+        <FinanceTrackerSwitch
+          defaultChecked={!!transaction.ignore}
+          label="Ignore"
+          name={FinanceTrackerInputNames.IGNORE}
+          onChange={handleIgnoreChange}
+        />
+      </div>
     </>
   );
 };
