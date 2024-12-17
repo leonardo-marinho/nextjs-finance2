@@ -63,6 +63,8 @@ export const FinanceListFilter = (): JSX.Element => {
     updateFinanceListFilters({ repeatOnly: checked });
   const handlePlaceholderOnlyFilterToggle = (checked: boolean): void =>
     updateFinanceListFilters({ placeholderOnly: checked });
+  const handlePendingOnlyFilterToggle = (checked: boolean): void =>
+    updateFinanceListFilters({ pendingOnly: checked });
   const handleSortByClick = (): void => {
     const dateSort = financeListPagination?.sort?.find(
       (sort: ArrayType<typeof financeListPagination.sort>) =>
@@ -142,6 +144,16 @@ export const FinanceListFilter = (): JSX.Element => {
                 onCheckedChange={handlePlaceholderOnlyFilterToggle}
               />
               <Label htmlFor="filter-repeat-only">Placeholder only</Label>
+            </div>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <div className="flex flex-1 items-center gap-2">
+              <Switch
+                defaultChecked={!!financeListFilters?.pendingOnly}
+                name="pending-only"
+                onCheckedChange={handlePendingOnlyFilterToggle}
+              />
+              <Label htmlFor="pending-only">Pending only</Label>
             </div>
           </DropdownMenuItem>
         </DropdownMenuContent>

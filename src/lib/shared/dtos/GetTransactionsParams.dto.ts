@@ -55,6 +55,10 @@ export class TransactionsFilters implements TransactionQueryRawFilters {
 
   @IsOptional()
   @IsBoolean()
+  pendingOnly?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
   placeholderOnly?: boolean;
 
   @IsOptional()

@@ -16,6 +16,7 @@ export interface TransactionQueryRawFilters {
   id?: number;
   or?: TransactionQueryRawFilters[];
   paymentMethod?: PrismaEnum.PaymentMethodEnum[];
+  pendingOnly?: boolean;
   placeholderOnly?: boolean;
   repeatOnly?: boolean;
   startDate?: Date;
@@ -82,6 +83,9 @@ export class TransactionService {
     };
 
     if (rawFilters?.placeholderOnly) filters.category = { name: 'Placeholder' };
+
+    if (rawFilters?.pendingOnly)
+      filters.status = PrismaEnum.TransactionStatusEnum.PENDING;
 
     if (rawFilters?.startDate && rawFilters?.endDate)
       filters.date = {
