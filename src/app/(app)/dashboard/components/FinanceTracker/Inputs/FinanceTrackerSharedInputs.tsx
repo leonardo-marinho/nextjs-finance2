@@ -2,14 +2,24 @@ import { FinanceTrackerInputNames } from '@/app/(app)/dashboard/components/Finan
 import { FinanceTrackerComboBox } from '@/app/(app)/dashboard/components/FinanceTracker/Inputs/FinanceTrackerComboBox';
 import { FinanceTrackerInput } from '@/app/(app)/dashboard/components/FinanceTracker/Inputs/FinanceTrackerInput';
 import { FinanceTrackerSelect } from '@/app/(app)/dashboard/components/FinanceTracker/Inputs/FinanceTrackerSelect';
+import { Button } from '@/lib/ui/components/Button';
 import { useFinanceTracker } from '@/lib/ui/hooks/useFinanceTracker';
 import { SelectItemDataValue } from '@/lib/ui/types/Select';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 export const FinanceTrackerSharedInputs = (): JSX.Element => {
   const [inProgressDateValue, setInProgressDateValue] = useState<string>('');
-  const { optionsSelectItems, setFieldValue, transaction } =
+  const { optionsSelectItems, setFieldValue, transaction, updateUI } =
     useFinanceTracker();
+
+  const handleSetTodayClick = (): void => {
+    const today = new Date();
+    const todayString = today.toISOString().split('T')[0];
+
+    setInProgressDateValue(todayString);
+    setFieldValue(FinanceTrackerInputNames.DATE, today);
+    updateUI();
+  };
 
   const handleDateChange = (value: string): void =>
     setInProgressDateValue(value);
@@ -30,16 +40,26 @@ export const FinanceTrackerSharedInputs = (): JSX.Element => {
     setFieldValue(FinanceTrackerInputNames.AMOUNT, Number(value));
   };
 
+  const date = useMemo(
+    () => transaction.getDateString(),
+    [transaction, transaction.date],
+  );
+
   return (
     <>
-      <FinanceTrackerInput
-        defaultValue={transaction.getDateString()}
-        label="Date"
-        name={FinanceTrackerInputNames.DATE}
-        onBlur={handleDateBlur}
-        onChange={handleDateChange}
-        type="date"
-      />
+      <div className="flex items-end gap-1">
+        <FinanceTrackerInput
+          defaultValue={date}
+          label="Date"
+          name={FinanceTrackerInputNames.DATE}
+          onBlur={handleDateBlur}
+          onChange={handleDateChange}
+          type="date"
+        />
+        <Button className="w-1/6" onClick={handleSetTodayClick}>
+          Hoje
+        </Button>
+      </div>
       <FinanceTrackerComboBox
         defaultValue={transaction.tags || ''}
         label="Tags"

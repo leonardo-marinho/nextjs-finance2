@@ -58,6 +58,7 @@ export interface FinanceTrackerContextData {
   transaction: TransactionEditModel;
   updateTab: (tabName: PrismaEnums.TransactionTypeEnum) => void;
   updateTransaction: (transaction: TransactionModel) => void;
+  updateUI: () => void;
 }
 
 export const FinanceTrackerContext = createContext<FinanceTrackerContextData>({
@@ -78,6 +79,7 @@ export const FinanceTrackerContext = createContext<FinanceTrackerContextData>({
   transaction: new TransactionEditModel(),
   updateTab: noop,
   updateTransaction: noop,
+  updateUI: noop,
 });
 
 interface FinanceTrackerProviderProps extends React.PropsWithChildren {}
@@ -305,6 +307,7 @@ export const FinanceTrackerProvider = ({
         transaction,
         updateTab,
         updateTransaction,
+        updateUI,
       }}
     >
       {children}
