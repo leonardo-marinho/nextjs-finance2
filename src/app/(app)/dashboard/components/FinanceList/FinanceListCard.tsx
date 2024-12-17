@@ -136,7 +136,7 @@ export const FinanceListCard = ({
                 ?.split(',')
                 .map((tag: string, index: number) => (
                   <FinanceTrackerTag key={`tag-${index}`}>
-                    {capitalize(tag)}
+                    {capitalize(tag.trim())}
                   </FinanceTrackerTag>
                 ))}
             </div>
