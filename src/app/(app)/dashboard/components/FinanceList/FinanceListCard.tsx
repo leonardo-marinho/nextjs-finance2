@@ -1,5 +1,6 @@
 import { FinanceTrackerTag } from '@/app/(app)/dashboard/components/FinanceTracker/FinanceTrackerTag';
 import { TransactionModel } from '@/lib/shared/models/Transaction.model';
+import { getStartEndDatesByMonth } from '@/lib/shared/utils/Date.utils';
 import { BalanceAmount } from '@/lib/ui/components/BalanceAmount';
 import { Button } from '@/lib/ui/components/Button';
 import { Card, CardContent } from '@/lib/ui/components/Card';
@@ -7,21 +8,16 @@ import { useFinanceTracker } from '@/lib/ui/hooks/useFinanceTracker';
 import { cn } from '@/lib/ui/utils/classnames';
 import { $Enums as PrismaEnums } from '@prisma/client';
 import clsx from 'clsx';
-import { capitalize, update } from 'lodash';
+import { capitalize } from 'lodash';
 import {
-  Check,
   Copy,
-  Divide,
   Info,
   Pencil,
-  SquareCheck,
   SquareCheckBig,
   SquareX,
-  Tally1,
-  Tally2,
   Trash2,
 } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 interface FinanceListCardProps
   extends React.ComponentPropsWithoutRef<typeof Card> {
@@ -63,7 +59,19 @@ export const FinanceListCard = ({
     updateTransaction(transaction);
   };
 
-  const isPaid = transaction.status === PrismaEnums.TransactionStatusEnum.PAID;
+  const isPaid = useMemo(() => {
+    if (transaction.isCreditCardTransaction() && transaction.billingDate) {
+      const refDate = new Date(transaction.billingDate);
+      const [, endDate] = getStartEndDatesByMonth(
+        refDate.getMonth(),
+        refDate.getFullYear(),
+      );
+
+      return new Date() > endDate;
+    }
+
+    return transaction.status === PrismaEnums.TransactionStatusEnum.PAID;
+  }, [transaction]);
 
   return (
     <div className="relative">
@@ -80,7 +88,7 @@ export const FinanceListCard = ({
           <div
             className={clsx(
               'flex flex-col gap-1 opacity-50',
-              isPaid && 'opacity-100',
+              isPaid && '!opacity-100',
             )}
           >
             <div className="flex items-center justify-between">
