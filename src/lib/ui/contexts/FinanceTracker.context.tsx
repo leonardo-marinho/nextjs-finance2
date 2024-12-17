@@ -295,7 +295,7 @@ export const FinanceTrackerProvider = ({
 
     if (response.result) {
       toast.success('Transaction updated successfully');
-      updateUI();
+      reloadDashboardData();
     } else toast.error('Transaction failed to update');
   };
 
