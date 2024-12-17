@@ -17,18 +17,21 @@ interface FinanceTrackerSelectProps {
   name: string;
   onChange: (value: SelectItemDataValue) => void;
   placeholder: string;
+  value?: SelectItemDataValue;
 }
 
 export const FinanceTrackerSelect = ({
   data = [],
   defaultValue,
+  id: inputId,
   isDisabled,
   label,
   name,
-  id: inputId = name,
   onChange,
   placeholder,
+  value,
 }: FinanceTrackerSelectProps): JSX.Element => {
+  inputId ||= name;
   const handleChange = (value: string): void => onChange(value);
 
   return (
@@ -38,6 +41,7 @@ export const FinanceTrackerSelect = ({
         defaultValue={defaultValue}
         disabled={isDisabled}
         onValueChange={handleChange}
+        value={value}
       >
         <SelectTrigger id={inputId}>
           <SelectValue placeholder={placeholder} />

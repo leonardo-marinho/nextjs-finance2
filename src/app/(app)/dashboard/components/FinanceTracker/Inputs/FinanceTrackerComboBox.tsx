@@ -11,6 +11,7 @@ interface FinanceTrackerComboBoxProps
   label: string;
   name: string;
   onCategoryChange?: (category: string) => void;
+  onChange?: (tags: string, category?: string) => void;
   onTagsChange?: (tags: string) => void;
 }
 
@@ -18,6 +19,7 @@ export const FinanceTrackerComboBox = ({
   label,
   name,
   onCategoryChange,
+  onChange,
   onTagsChange,
   ...props
 }: FinanceTrackerComboBoxProps): JSX.Element => {
@@ -29,15 +31,20 @@ export const FinanceTrackerComboBox = ({
     onTagsChange?.(tags);
     setValue(tags);
 
-    if (!onCategoryChange || !categoryName) return;
+    let categoryId = undefined;
 
-    const category = optionsSelectItems?.categories.find(
-      (data: SelectItemData) => data.label === categoryName,
-    );
+    if (categoryName) {
+      const category = optionsSelectItems?.categories.find(
+        (data: SelectItemData) => data.label === categoryName,
+      );
 
-    if (!category?.value) return;
+      if (!category?.value) return;
 
-    // onCategoryChange(category.value);
+      categoryId = category.value;
+      onCategoryChange?.(category.value);
+    }
+
+    onChange?.(tags, categoryId);
   };
 
   const handleClearTagsClick = (): void => {

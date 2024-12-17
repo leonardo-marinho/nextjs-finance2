@@ -8,9 +8,14 @@ import { SelectItemDataValue } from '@/lib/ui/types/Select';
 import { useMemo, useState } from 'react';
 
 export const FinanceTrackerSharedInputs = (): JSX.Element => {
+  const {
+    optionsSelectItems,
+    setFieldsValues,
+    setFieldValue,
+    transaction,
+    updateUI,
+  } = useFinanceTracker();
   const [inProgressDateValue, setInProgressDateValue] = useState<string>('');
-  const { optionsSelectItems, setFieldValue, transaction, updateUI } =
-    useFinanceTracker();
 
   const handleSetTodayClick = (): void => {
     const today = new Date();
@@ -30,10 +35,16 @@ export const FinanceTrackerSharedInputs = (): JSX.Element => {
 
     setFieldValue(FinanceTrackerInputNames.DATE, date);
   };
-  const handleTagsChange = (value: string): void =>
-    setFieldValue(FinanceTrackerInputNames.TAGS, value);
-  const handleCategoryChange = (value: SelectItemDataValue): void =>
+  const handleTagsChange = (tags: string, categoryId?: string): void => {
+    setFieldsValues<number | string>([
+      { field: FinanceTrackerInputNames.TAGS, value: tags },
+      { field: FinanceTrackerInputNames.CATEGORY, value: Number(categoryId) },
+    ]);
+    updateUI();
+  };
+  const handleCategoryChange = (value: SelectItemDataValue): void => {
     setFieldValue(FinanceTrackerInputNames.CATEGORY, Number(value));
+  };
   const handleAccountChange = (value: SelectItemDataValue): void =>
     setFieldValue(FinanceTrackerInputNames.ACCOUNT, Number(value));
   const handleAmountChange = (value: string): void => {
@@ -64,19 +75,18 @@ export const FinanceTrackerSharedInputs = (): JSX.Element => {
         defaultValue={transaction.tags || ''}
         label="Tags"
         name={FinanceTrackerInputNames.TAGS}
-        onCategoryChange={(category: string) => handleCategoryChange(category)}
-        onTagsChange={handleTagsChange}
+        onChange={handleTagsChange}
         placeholder="Enter tags (comma-separated)"
       />
       <FinanceTrackerSelect
         data={optionsSelectItems?.categories}
-        defaultValue={
-          !!transaction.categoryId ? `${transaction.categoryId}` : undefined
-        }
         label="Category"
         name={FinanceTrackerInputNames.CATEGORY}
         onChange={handleCategoryChange}
         placeholder="Select category"
+        value={
+          !!transaction.categoryId ? `${transaction.categoryId}` : undefined
+        }
       />
       <div className="flex gap-2">
         <FinanceTrackerSelect

@@ -46,6 +46,10 @@ export interface FinanceTrackerContextData {
   >;
   resetTransaction: () => void;
   saveChanges: () => void;
+  setFieldsValues: <TValue>(
+    fields: { field: FinanceTrackerFieldNameType; value: TValue }[],
+    forceUpdateUI?: boolean,
+  ) => void;
   setFieldValue: (
     name: FinanceTrackerFieldNameType,
     value: boolean | number | object | string,
@@ -71,6 +75,7 @@ export const FinanceTrackerContext = createContext<FinanceTrackerContextData>({
   optionsSelectItems: null,
   resetTransaction: noop,
   saveChanges: noop,
+  setFieldsValues: noop,
   setFieldValue: noop,
   setKeepTemplate: noop,
   setShowFinanceTrackerPanel: noop,
@@ -173,6 +178,28 @@ export const FinanceTrackerProvider = ({
     const templateTransaction = new TransactionEditModel(transaction);
     // @ts-expect-error - TS doesn't know that transaction is a TransactionEditModel
     templateTransaction[name] = value;
+    setTransaction(templateTransaction);
+
+    if (forceUpdateUI) updateUI();
+  };
+
+  const setFieldsValues = <TValue,>(
+    fields: { field: FinanceTrackerFieldNameType; value: TValue }[],
+    forceUpdateUI: boolean = false,
+  ): void => {
+    const templateTransaction = new TransactionEditModel(transaction);
+    fields.forEach(
+      ({
+        field,
+        value,
+      }: {
+        field: FinanceTrackerFieldNameType;
+        value: TValue;
+      }) => {
+        // @ts-expect-error - TS doesn't know that transaction is a TransactionEditModel
+        templateTransaction[field] = value;
+      },
+    );
     setTransaction(templateTransaction);
 
     if (forceUpdateUI) updateUI();
@@ -299,6 +326,7 @@ export const FinanceTrackerProvider = ({
         optionsSelectItems,
         resetTransaction,
         saveChanges,
+        setFieldsValues,
         setFieldValue,
         setKeepTemplate,
         setShowFinanceTrackerPanel,
