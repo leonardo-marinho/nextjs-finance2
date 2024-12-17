@@ -10,6 +10,7 @@ const RootLayout = ({ children }: PropsWithChildren): JSX.Element => {
   return (
     <html className="dark h-full max-h-full max-w-full overflow-x-hidden">
       <Head>
+        <link href="/favicon.ico" rel="icon" sizes="any" />
         <meta content="yes" name="mobile-web-app-capable" />
         <meta content="yes" name="apple-mobile-web-app-capable" />
         <link href="/app.webmanifest" rel="manifest" />
