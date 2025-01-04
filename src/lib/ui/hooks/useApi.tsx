@@ -1,65 +1,64 @@
+'use client';
+
 import { ApiResponse } from '@/lib/shared/types/Api.types';
+import { ApiResponseUtils } from '@/lib/shared/utils/ApiResponse.utils';
 import { useCallback, useEffect, useState } from 'react';
 
-export interface UseApiData<TFunction extends UseApiApiFn, TArgs> {
-  data: ResponseDataType<TFunction>;
-  error: ResponseErrorType<TFunction>;
-  loading: boolean;
-  request: (args: TArgs) => void;
-  requestAsync: (args: TArgs) => ReturnType<TFunction>;
-}
-type ApiReturnType = Promise<ApiResponse>;
-type ResponseDataType<TFunction> = ResponseType<TFunction>['result'];
-type ResponseErrorType<TFunction> = ResponseType<TFunction>['errors'];
-type ResponseType<TFunction> = TFunction extends () => Promise<
-  infer R extends Awaited<ApiResponse>
->
-  ? R
-  : never;
+type InferResultType<TResponse extends ApiResponse> =
+  TResponse['result'] extends { data: infer TData }
+    ? TData
+    : TResponse['result'];
 
-type UseApiApiFn = () => ApiReturnType;
-
-interface UseApiOptions<TArgs> {
-  args?: TArgs;
+interface UseApiOptions {
   lazy?: boolean;
+  skip?: boolean;
 }
 
-interface UseApiProps<TFunction extends UseApiApiFn, TArgs> {
-  fn: (args: TArgs) => ReturnType<TFunction>;
-  options?: UseApiOptions<TArgs>;
-}
+export const useApi = <TResponse extends ApiResponse, TArgs>(
+  callback: (...args: TArgs[]) => Promise<TResponse>,
+  options: UseApiOptions = {},
+) => {
+  const { lazy = false, skip = false } = options;
+  const [data, setData] = useState<InferResultType<TResponse>>();
+  const [error, setError] = useState<Error | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const call = () => {
+    callAsync();
+  };
+  const callAsync = useCallback(
+    async (...args: TArgs[]) => {
+      if (skip) return;
 
-export const useApi = <
-  TFunction extends UseApiApiFn,
-  TArgs = never | undefined,
->({
-  fn,
-  options = { lazy: false },
-}: UseApiProps<TFunction, TArgs>): UseApiData<TFunction, TArgs> => {
-  const [data, setData] = useState<ResponseDataType<TFunction>>();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<ResponseErrorType<TFunction>>(null);
+      setIsLoading(true);
+      try {
+        const response = await callback(...args);
+        const result = ApiResponseUtils.resolveData(
+          response,
+        ) as InferResultType<TResponse>;
+        setData(result);
 
-  const request = useCallback(
-    (args: TArgs): void => {
-      setLoading(true);
-      fn(args)
-        .then((response: ApiResponse) => {
-          setError(response?.errors);
-          setData(response?.result);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+        return response;
+      } catch (error) {
+        setError(error as Error);
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
     },
-    [fn],
+    [callback, skip],
   );
 
   useEffect(() => {
-    if (!!options?.lazy) return;
+    if (!lazy && !skip) {
+      callAsync();
+    }
+  }, [lazy, skip, callAsync]);
 
-    request(options?.args || ({} as TArgs));
-  }, [options?.lazy]);
-
-  return { data, error, loading, request, requestAsync: fn };
+  return {
+    call,
+    callAsync,
+    data,
+    error,
+    isLoading,
+  };
 };

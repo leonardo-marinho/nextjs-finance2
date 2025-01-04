@@ -1,6 +1,4 @@
 import { FinanceTrackerController } from '@/lib/api/controllers/FinanceTracker.controller';
-import { ApiService } from '@/lib/api/services/Api.service';
+import { ApiUtils } from '@/lib/api/utils/Api.utils';
 
-export const GET = ApiService.createHandler(
-  FinanceTrackerController.getOptions,
-);
+export const GET = ApiUtils.handleMethod(FinanceTrackerController.getOptions);

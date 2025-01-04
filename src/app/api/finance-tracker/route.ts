@@ -1,6 +1,6 @@
 import { FinanceTrackerController } from '@/lib/api/controllers/FinanceTracker.controller';
-import { ApiService } from '@/lib/api/services/Api.service';
+import { ApiUtils } from '@/lib/api/utils/Api.utils';
 
-export const POST = ApiService.createHandler(
+export const POST = ApiUtils.handleMethod(
   FinanceTrackerController.createTransaction,
 );

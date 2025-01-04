@@ -5,7 +5,7 @@ import { AuthSignUpBody } from '@/lib/shared/dtos/AuthSignUpBody.dto';
 import { ApiAuthException } from '@/lib/shared/exceptions/ApiAuth.exception';
 import { UserModel } from '@/lib/shared/models/User.model';
 import { TokenPayload } from '@/lib/shared/types/Auth.types';
-import { User } from '@prisma/client';
+import { $Enums as PrismaEnum, User } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { plainToClass } from 'class-transformer';
 import { pick } from 'lodash';
@@ -17,6 +17,14 @@ export class UserService {
         email,
       },
     });
+  }
+  static async getUserRoles(userId: number): Promise<PrismaEnum.Role[]> {
+    const user = await prisma.user.findUnique({
+      select: { roles: true },
+      where: { id: userId },
+    });
+
+    return user?.roles || [];
   }
 
   static async login(body: AuthSignInBodyDto): Promise<TokenPayload> {

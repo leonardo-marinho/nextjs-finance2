@@ -4,7 +4,7 @@ import {
   BalanceBiDto,
 } from '@/lib/shared/dtos/BiGetBalanceBi.dto';
 import { TransactionModel } from '@/lib/shared/models/Transaction.model';
-import { lastDayOfMonth } from '@/lib/shared/utils/Date.utils';
+import { DateUtils } from '@/lib/shared/utils/Date.utils';
 import { $Enums as PrismaEnums } from '@prisma/client';
 import { pick } from 'lodash';
 
@@ -150,7 +150,7 @@ export class BiService {
 
   static async getMonthBalance(date: Date, userId: number): Promise<number> {
     const startMonthDate = new Date(date.getFullYear(), date.getMonth());
-    const endMonthDate = lastDayOfMonth(startMonthDate);
+    const endMonthDate = DateUtils.lastDayOfMonth(startMonthDate);
 
     const transactions: TransactionModel[] =
       await TransactionService.getTransactions(userId, {

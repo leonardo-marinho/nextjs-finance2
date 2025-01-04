@@ -1,10 +1,10 @@
 import { FinanceTrackerController } from '@/lib/api/controllers/FinanceTracker.controller';
-import { ApiService } from '@/lib/api/services/Api.service';
+import { ApiUtils } from '@/lib/api/utils/Api.utils';
 
-export const PUT = ApiService.createHandler(
+export const PUT = ApiUtils.handleMethod(
   FinanceTrackerController.updateTransaction,
 );
 
-export const DELETE = ApiService.createHandler(
+export const DELETE = ApiUtils.handleMethod(
   FinanceTrackerController.deleteTransaction,
 );

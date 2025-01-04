@@ -20,29 +20,29 @@ import React, { useMemo } from 'react';
 export const FinanceList = () => {
   const { financeListTab, transactionsQuery, updateFinanceListTab } =
     useDashboard();
-  const response = transactionsQuery?.data;
+  const data = transactionsQuery?.data;
 
   const accountTransactions = useMemo(
     () =>
-      response?.data?.filter(
+      data?.filter(
         (transaction: TransactionModel) =>
           !transaction.isCreditCardTransaction(),
       ) || [],
-    [response?.data],
+    [data],
   );
 
   const creditCardTransactions = useMemo(
     () =>
-      response?.data?.filter((transaction: TransactionModel) =>
+      data?.filter((transaction: TransactionModel) =>
         transaction.isCreditCardTransaction(),
       ) || [],
-    [response?.data],
+    [data],
   );
 
   const handleTabChange = (tabName: string): void =>
     updateFinanceListTab(tabName);
 
-  const isLoading = transactionsQuery?.loading;
+  const isLoading = transactionsQuery?.isLoading;
 
   return (
     <Card className="flex w-full flex-col">
@@ -51,7 +51,7 @@ export const FinanceList = () => {
         <FinanceListFilter />
       </CardHeader>
       <CardContent className="h-0 grow overflow-auto">
-        {isLoading || !response ? (
+        {isLoading || !data ? (
           <Theme className="flex size-full justify-center bg-transparent">
             <Spinner size="3" />
           </Theme>

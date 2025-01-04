@@ -1,4 +1,4 @@
-import { ArrayType } from '@/lib/shared/types/Array';
+import { ArrayType } from '@/lib/shared/types/Array.types';
 import { Button } from '@/lib/ui/components/Button';
 import {
   DropdownMenu,

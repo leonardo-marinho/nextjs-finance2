@@ -25,7 +25,7 @@ import React from 'react';
 export const FinanceBalance = () => {
   const { balanceBiQuery, financeListTab, updateFinanceListTab } =
     useDashboard();
-  const data: BalanceBiDto = balanceBiQuery?.data;
+  const data: BalanceBiDto = balanceBiQuery?.data as BalanceBiDto;
   const isLoading = balanceBiQuery?.loading;
 
   const handleTabChange = (tabName: string): void =>

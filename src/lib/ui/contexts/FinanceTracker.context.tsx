@@ -2,10 +2,9 @@
 import { financeTrackerTabs } from '@/app/(app)/dashboard/components/FinanceTracker/constants';
 import { FinanceTrackerOptionsDto } from '@/lib/shared/dtos/FinanceTrackerOptions.dto';
 import { FinanceTrackerUpdateTransactionBody } from '@/lib/shared/dtos/FinanceTrackerUpdateTransactionBody.dto';
-import { IdQueryDto } from '@/lib/shared/dtos/IdQuery.dto';
 import { TransactionModel } from '@/lib/shared/models/Transaction.model';
 import { TransactionEditModel } from '@/lib/shared/models/TransactionEdit.model';
-import { ArrayType } from '@/lib/shared/types/Array';
+import { ArrayType } from '@/lib/shared/types/Array.types';
 import { useApi } from '@/lib/ui/hooks/useApi';
 import { useDashboard } from '@/lib/ui/hooks/useDashboard';
 import { usePromise } from '@/lib/ui/hooks/usePromise';
@@ -19,7 +18,13 @@ import {
 } from '@prisma/client';
 import { plainToClass } from 'class-transformer';
 import { noop } from 'lodash';
-import React, { createContext, useEffect, useMemo, useState } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { toast } from 'react-toastify';
 
 export interface FinanceTrackerContextData {
@@ -116,29 +121,38 @@ export const FinanceTrackerProvider = ({
     },
   );
 
-  const { data: options } = useApi({
-    fn: FinanceTrackerApiService.getOptions.bind(FinanceTrackerApiService),
+  const getOptionsFn = useCallback(
+    () => FinanceTrackerApiService.getOptions(),
+    [],
+  );
+  const { data: options } = useApi(getOptionsFn);
+
+  const createTransactionFn = useCallback(
+    () => FinanceTrackerApiService.createTransaction(transaction),
+    [transaction],
+  );
+  const { callAsync: createTransactionRequest } = useApi(createTransactionFn, {
+    lazy: true,
   });
 
-  const { requestAsync: createTransactionRequest } = useApi({
-    fn: () => FinanceTrackerApiService.createTransaction(transaction),
-    options: { lazy: true },
-  });
-
-  const { requestAsync: updateTransactionRequest } = useApi({
-    fn: () =>
+  const updateTransactionFn = useCallback(
+    () =>
       FinanceTrackerApiService.updateTransaction(
         { id: transaction.id },
         transaction,
       ),
-    options: { lazy: true },
+    [transaction],
+  );
+  const { callAsync: updateTransactionRequest } = useApi(updateTransactionFn, {
+    lazy: true,
   });
 
-  const { requestAsync: deleteTransactionRequest } = useApi({
-    fn: (params: IdQueryDto) =>
-      FinanceTrackerApiService.deleteTransaction(params),
-    options: { lazy: true },
-  });
+  const { callAsync: deleteTransactionRequest } = useApi(
+    FinanceTrackerApiService.deleteTransaction.bind(FinanceTrackerApiService),
+    {
+      lazy: true,
+    },
+  );
 
   const optionsSelectItems: null | Record<
     keyof FinanceTrackerContextOptions,
@@ -266,6 +280,7 @@ export const FinanceTrackerProvider = ({
   };
 
   const deleteTransaction = async (id: number): Promise<void> => {
+    console.log('{ id }', { id });
     const response = (await toast.promise(deleteTransactionRequest({ id }), {
       pending: 'Deleting transaction...',
     })) as Awaited<

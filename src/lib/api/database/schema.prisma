@@ -35,6 +35,11 @@ enum TransactionRepeatEnum {
   MONTHLY
 }
 
+enum Role {
+  ADMIN
+  USER
+  GUEST
+}
 model Account {
   id    Int             @id @default(autoincrement())
   name  String
@@ -130,6 +135,7 @@ model User {
   name     String?
   email    String  @unique
   password String
+  roles    Role[]   @default([])
 
   accounts Account[]
   transactions Transaction[]

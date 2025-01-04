@@ -1,6 +1,6 @@
 import { FinanceTrackerTag } from '@/app/(app)/dashboard/components/FinanceTracker/FinanceTrackerTag';
 import { TransactionModel } from '@/lib/shared/models/Transaction.model';
-import { getStartEndDatesByMonth } from '@/lib/shared/utils/Date.utils';
+import { DateUtils } from '@/lib/shared/utils/Date.utils';
 import { BalanceAmount } from '@/lib/ui/components/BalanceAmount';
 import { Button } from '@/lib/ui/components/Button';
 import { Card, CardContent } from '@/lib/ui/components/Card';
@@ -62,7 +62,7 @@ export const FinanceListCard = ({
   const isPaid = useMemo(() => {
     if (transaction.isCreditCardTransaction() && transaction.billingDate) {
       const refDate = new Date(transaction.billingDate);
-      const [, endDate] = getStartEndDatesByMonth(
+      const [, endDate] = DateUtils.getStartEndDatesByMonth(
         refDate.getMonth(),
         refDate.getFullYear(),
       );

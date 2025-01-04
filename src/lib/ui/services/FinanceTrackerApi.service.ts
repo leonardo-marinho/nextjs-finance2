@@ -9,6 +9,8 @@ class FinanceTrackerApiService extends ApiService {
   async createTransaction(
     args: FinanceTrackerUpdateTransactionBody,
   ): Promise<ApiResponse<TransactionModel>> {
+    console.log(args);
+
     return this.request<TransactionModel, FinanceTrackerUpdateTransactionBody>(
       `/api/finance-tracker`,
       {

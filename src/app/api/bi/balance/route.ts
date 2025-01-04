@@ -1,4 +1,4 @@
 import { BiController } from '@/lib/api/controllers/Bi.controller';
-import { ApiService } from '@/lib/api/services/Api.service';
+import { ApiUtils } from '@/lib/api/utils/Api.utils';
 
-export const GET = ApiService.createHandler(BiController.getBalanceBi);
+export const GET = ApiUtils.handleMethod(BiController.getBalanceBi);

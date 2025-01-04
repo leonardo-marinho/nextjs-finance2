@@ -1,13 +1,13 @@
 import {
-  ApiDataType,
+  ApiEndpointDataType,
   ApiPaginatedData,
   ApiResponse,
 } from '@/lib/shared/types/Api.types';
 import { ClassConstructor, plainToInstance } from 'class-transformer';
 
 export const paginatedResponseToInstance = <
-  TData extends ApiDataType,
-  TCls extends ApiDataType,
+  TData extends ApiEndpointDataType,
+  TCls extends ApiEndpointDataType,
 >(
   response: ApiResponse<ApiPaginatedData<TData>>,
   cls: ClassConstructor<TCls>,

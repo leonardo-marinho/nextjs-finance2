@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/api/database';
 import { FinanceTrackerUpdateTransactionBody } from '@/lib/shared/dtos/FinanceTrackerUpdateTransactionBody.dto';
 import { TransactionModel } from '@/lib/shared/models/Transaction.model';
-import { addMonths, addWeeks } from '@/lib/shared/utils/Date.utils';
+import { DateUtils } from '@/lib/shared/utils/Date.utils';
 import { Prisma, $Enums as PrismaEnums } from '@prisma/client';
 
 export class FinanceTrackerService {
@@ -24,10 +24,10 @@ export class FinanceTrackerService {
             ? 'billingDate'
             : 'date']:
             body.repeatType === PrismaEnums.TransactionRepeatEnum.MONTHLY
-              ? addMonths(body.date, i)
-              : addWeeks(body.date, i),
+              ? DateUtils.addMonths(body.date, i)
+              : DateUtils.addWeeks(body.date, i),
           repeatId: transactionRepeatRecord.id,
-        }) as Prisma.TransactionUncheckedCreateInput,
+        } as Prisma.TransactionUncheckedCreateInput),
     );
 
     await prisma.transaction.createMany({

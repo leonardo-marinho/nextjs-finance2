@@ -1,4 +1,4 @@
-import { isValidDate } from '@/lib/shared/utils/Date.utils';
+import { DateUtils } from '@/lib/shared/utils/Date.utils';
 import { isStrictNullOrUndefined } from '@/lib/shared/utils/Value';
 import {
   $Enums as PrismaEnums,
@@ -30,7 +30,7 @@ export class FinanceTrackerUpdateTransactionBody
   @IsOptional()
   @IsDate()
   @Transform(({ value }: { value?: null | string }) =>
-    isStrictNullOrUndefined(value) || !isValidDate(new Date(value!))
+    isStrictNullOrUndefined(value) || !DateUtils.isValidDate(new Date(value!))
       ? null
       : new Date(value!),
   )

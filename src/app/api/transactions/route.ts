@@ -1,6 +1,4 @@
 import { TransactionController } from '@/lib/api/controllers/Transaction.controller';
-import { ApiService } from '@/lib/api/services/Api.service';
+import { ApiUtils } from '@/lib/api/utils/Api.utils';
 
-export const GET = ApiService.createHandler(
-  TransactionController.getTransactions,
-);
+export const GET = ApiUtils.handleMethod(TransactionController.getTransactions);

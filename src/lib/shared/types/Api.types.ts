@@ -1,20 +1,25 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { IncomingMessage } from 'http';
 import { NextApiRequest } from 'next';
 
-export type ApiDataType = boolean | number | object | string;
+export type ApiEndpointDataType = boolean | null | number | object | string;
 
-export interface ApiPaginatedData<TData extends ApiDataType> {
+export interface ApiPaginatedData<
+  TData extends ApiEndpointDataType = ApiEndpointDataType,
+> {
   data: TData[];
-  hasNext: boolean;
+  hasNext?: boolean;
   skip: number;
   take: number;
   total: number;
 }
 
-export interface ApiResponse<TResult extends ApiDataType = any> {
+export interface ApiResponse<
+  TResult extends ApiEndpointDataType | ApiPaginatedData =
+    | ApiEndpointDataType
+    | ApiPaginatedData,
+> {
   errors?: ApiResponseError[] | null;
-  result?: null | TResult;
+  result: TResult;
 }
 
 export interface ApiResponseError {

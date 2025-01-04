@@ -1,15 +1,14 @@
 import { Endpoint } from '@/lib/api/decorators/Endpoint.decorator';
-import Params from '@/lib/api/decorators/Params.decorator';
-import Query from '@/lib/api/decorators/Query.decorator';
-import UserId from '@/lib/api/decorators/UserId.decorator';
 import { TransactionService } from '@/lib/api/services/Transaction.service';
-import { createPaginatedData } from '@/lib/api/utils/Api.utils';
 import { GetTransactionsParamsDto } from '@/lib/shared/dtos/GetTransactionsParams.dto';
 import { IdQueryDto } from '@/lib/shared/dtos/IdQuery.dto';
 import { ApiNotFoundException } from '@/lib/shared/exceptions/ApiNotFound.exception';
 import { TransactionModel } from '@/lib/shared/models/Transaction.model';
 import { ApiPaginatedData } from '@/lib/shared/types/Api.types';
+import { ApiResponseUtils } from '@/lib/shared/utils/ApiResponse.utils';
 import { plainToInstance } from 'class-transformer';
+
+import { Params, Query, UserId } from '../decorators/Args';
 
 export class TransactionController {
   @Endpoint({ private: true })
@@ -41,7 +40,7 @@ export class TransactionController {
         params?.pagination,
       );
 
-    return createPaginatedData<TransactionModel>(
+    return ApiResponseUtils.createPaginatedData<TransactionModel>(
       plainToInstance(TransactionModel, transactions),
       count,
       params?.pagination?.skip,

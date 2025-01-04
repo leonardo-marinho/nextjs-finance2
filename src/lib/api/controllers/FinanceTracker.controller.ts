@@ -1,8 +1,5 @@
 import { prisma } from '@/lib/api/database';
-import Body from '@/lib/api/decorators/Body.decorator';
 import { Endpoint } from '@/lib/api/decorators/Endpoint.decorator';
-import Query from '@/lib/api/decorators/Query.decorator';
-import UserId from '@/lib/api/decorators/UserId.decorator';
 import { FinanceTrackerService } from '@/lib/api/services/FinanceTracker.service';
 import { FinanceTrackerOptionsDto } from '@/lib/shared/dtos/FinanceTrackerOptions.dto';
 import { FinanceTrackerUpdateTransactionBody } from '@/lib/shared/dtos/FinanceTrackerUpdateTransactionBody.dto';
@@ -15,6 +12,8 @@ import {
 } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { omit } from 'lodash';
+
+import { Body, Query, UserId } from '../decorators/Args';
 
 export class FinanceTrackerController {
   @Endpoint({ private: true })
@@ -62,11 +61,12 @@ export class FinanceTrackerController {
   @Endpoint({ private: true })
   static async deleteTransaction(
     @UserId() userId: number,
-    @Query({ schema: IdQueryDto }) { id }: IdQueryDto,
+    @Query({ schema: IdQueryDto }) q: IdQueryDto,
   ): Promise<boolean> {
+    console.log('deleteTransaction', q);
     const originalTransaction = await prisma.transaction.findUnique({
       where: {
-        id,
+        id: q.id,
         userId,
       },
     });
@@ -77,7 +77,7 @@ export class FinanceTrackerController {
       await FinanceTrackerService.deleteRepeatTransaction(
         originalTransaction.repeatId,
       );
-    else await prisma.transaction.delete({ where: { id } });
+    else await prisma.transaction.delete({ where: { id: q.id } });
 
     return true;
   }
