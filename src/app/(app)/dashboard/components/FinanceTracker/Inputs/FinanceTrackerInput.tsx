@@ -10,13 +10,13 @@ export interface FinanceTrackerInputProps
 }
 
 export const FinanceTrackerInput = ({
-  label,
   name,
   id: inputId = name,
+  label,
   onChange,
   type,
   ...props
-}: FinanceTrackerInputProps): JSX.Element => {
+}: FinanceTrackerInputProps) => {
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void =>
     onChange(e.target.value);
 

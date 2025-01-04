@@ -9,12 +9,14 @@ import { SelectItemData } from '@/lib/ui/types/Select';
 import { $Enums as PrismaEnums } from '@prisma/client';
 import React, { useMemo } from 'react';
 
-interface FinanceTrackerTransferenceTabProps
-  extends Omit<React.ComponentPropsWithoutRef<typeof TabsContent>, 'value'> {}
+type FinanceTrackerTransferenceTabProps = Omit<
+  React.ComponentPropsWithoutRef<typeof TabsContent>,
+  'value'
+>;
 
 export const FinanceTrackerTransferenceTab = ({
   ...props
-}: FinanceTrackerTransferenceTabProps): JSX.Element => {
+}: FinanceTrackerTransferenceTabProps) => {
   const {
     isEditMode,
     optionsSelectItems,

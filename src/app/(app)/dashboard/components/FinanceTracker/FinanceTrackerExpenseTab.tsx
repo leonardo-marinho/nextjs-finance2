@@ -12,12 +12,14 @@ import {
 } from '@prisma/client';
 import React, { useMemo, useState } from 'react';
 
-interface FinanceTrackerExpenseTabProps
-  extends Omit<React.ComponentPropsWithoutRef<typeof TabsContent>, 'value'> {}
+type FinanceTrackerExpenseTabProps = Omit<
+  React.ComponentPropsWithoutRef<typeof TabsContent>,
+  'value'
+>;
 
 export const FinanceTrackerExpenseTab = ({
   ...props
-}: FinanceTrackerExpenseTabProps): JSX.Element => {
+}: FinanceTrackerExpenseTabProps) => {
   const { isEditMode, options, saveChanges, setFieldValue, transaction } =
     useFinanceTracker();
   const [inProgressDateValue, setInProgressDateValue] = useState<string>('');

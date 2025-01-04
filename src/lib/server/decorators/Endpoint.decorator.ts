@@ -17,12 +17,12 @@ import { cookies } from 'next/headers';
 import { NextRequest } from 'next/server';
 import 'reflect-metadata';
 
-interface NextContext {
-  params: Record<string, unknown>;
-}
-
 interface EndpointOptions {
   private?: boolean;
+}
+
+interface NextContext {
+  params: Record<string, unknown>;
 }
 
 export const Endpoint =
@@ -37,7 +37,7 @@ export const Endpoint =
       req: NextRequest,
       context: NextContext,
     ): Promise<void> => {
-      const cookieStore = cookies();
+      const cookieStore = await cookies();
       const token = cookieStore.get('token')?.value;
 
       let userId: number | undefined = undefined;

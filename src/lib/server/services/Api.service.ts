@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-function-type */
 import { config } from '@/lib/shared/config';
 import { ApiResponse, ApiResponseError } from '@/lib/shared/types/Api.types';
 import { NextRequest, NextResponse } from 'next/server';
@@ -13,7 +14,6 @@ export abstract class ApiService {
 
         return this.handleResult(result);
       } catch (error) {
-        // eslint-disable-next-line no-console
         if (config.node.isDevEnv()) console.error(error);
 
         return this.handleError(req, error as Error);

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-function-type */
 import { PrismaStrictUserQueryExtension } from '@/lib/server/database/extensions/PrismaStrictUserQuery.extension';
 import { Prisma, PrismaClient } from '@prisma/client';
 
@@ -11,7 +12,9 @@ export const prisma = new PrismaClient()
         ): Promise<[Prisma.Result<Model, Args, 'findMany'>, number]> {
           return prisma.$transaction([
             (this as { findMany: Function }).findMany(args),
-            (this as { count: Function }).count({ where: (args as any).where }),
+            (this as { count: Function }).count({
+              where: (args as { where: unknown }).where,
+            }),
           ]);
         },
       },

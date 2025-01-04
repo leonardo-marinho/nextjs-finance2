@@ -7,7 +7,7 @@ interface FinanceListTabProps {
   data: TransactionModel[];
 }
 
-export const FinanceListTab = ({ data }: FinanceListTabProps): JSX.Element => {
+export const FinanceListTab = ({ data }: FinanceListTabProps) => {
   const {
     cloneTransaction,
     deleteTransaction,

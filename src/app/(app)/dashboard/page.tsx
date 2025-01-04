@@ -5,7 +5,7 @@ import { FinanceTrackerProvider } from '@/lib/ui/contexts/FinanceTracker.context
 import { cn } from '@/lib/ui/utils/classnames';
 import { ToastContainer } from 'react-toastify';
 
-const DashboardPage = (): JSX.Element => {
+const DashboardPage = () => {
   return (
     <div className={cn('relative flex flex-col p-2 h-screen', 'md:p-6')}>
       <ToastContainer />

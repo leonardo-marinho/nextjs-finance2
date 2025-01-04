@@ -26,7 +26,7 @@ export const DEFAULT_ACCOUNT_PAYMENT_METHOD_FILTER = (
     endDate,
     paymentMethod: [PrismaEnums.PaymentMethodEnum.ACCOUNT],
     startDate,
-  }) as TransactionsFilters;
+  } as TransactionsFilters);
 
 export const DEFAULT_CREDIT_CARD_PAYMENT_METHOD_FILTER = (
   startDate?: Date,
@@ -36,7 +36,7 @@ export const DEFAULT_CREDIT_CARD_PAYMENT_METHOD_FILTER = (
     billableEndDate: endDate,
     billableStartDate: startDate,
     paymentMethod: [PrismaEnums.PaymentMethodEnum.CREDIT_CARD],
-  }) as TransactionsFilters;
+  } as TransactionsFilters);
 
 const DEFAULT_FILTERS = (
   startDate?: Date,
@@ -103,11 +103,9 @@ export const DashboardContext = createContext<DashboardContextData>({
   updateRefDate: noop,
 });
 
-interface DashboardProviderProps extends React.PropsWithChildren {}
+type DashboardProviderProps = React.PropsWithChildren;
 
-export const DashboardProvider = ({
-  children,
-}: DashboardProviderProps): JSX.Element => {
+export const DashboardProvider = ({ children }: DashboardProviderProps) => {
   const [currDate] = useState(new Date());
   const [refDate, setRefDate] = useState<Date>(currDate);
   const [hasFilters, setHasFilters] = useState<boolean>(false);

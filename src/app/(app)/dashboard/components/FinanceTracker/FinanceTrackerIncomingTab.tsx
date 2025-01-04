@@ -17,7 +17,7 @@ interface FinanceTrackerIncomingTabProps
 export const FinanceTrackerIncomingTab = ({
   onSubmit,
   ...props
-}: FinanceTrackerIncomingTabProps): JSX.Element => {
+}: FinanceTrackerIncomingTabProps) => {
   const { isEditMode, saveChanges, setFieldValue } = useFinanceTracker();
 
   const handleSave = async (): Promise<void> => {

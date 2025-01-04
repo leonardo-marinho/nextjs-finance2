@@ -12,17 +12,6 @@ import {
 
 export const DEFAULT_API_PAGINATION_PARAMS_TAKE = 10;
 
-export class ApiPaginationSortOrder<TFields extends string = string> {
-  @IsOptional()
-  @IsString()
-  field: TFields;
-
-  @IsOptional()
-  @IsString()
-  @IsIn(Object.values(Prisma.SortOrder))
-  order: Prisma.SortOrder = Prisma.SortOrder.desc;
-}
-
 export class ApiPagination<TFields extends string = string> {
   @IsOptional()
   @IsInt()
@@ -45,4 +34,15 @@ export class ApiPagination<TFields extends string = string> {
 export class ApiPaginationParamsDto<TFields extends string = string> {
   @IsOptional()
   pagination?: ApiPagination<TFields>;
+}
+
+export class ApiPaginationSortOrder<TFields extends string = string> {
+  @IsOptional()
+  @IsString()
+  field: TFields;
+
+  @IsOptional()
+  @IsString()
+  @IsIn(Object.values(Prisma.SortOrder))
+  order: Prisma.SortOrder = Prisma.SortOrder.desc;
 }

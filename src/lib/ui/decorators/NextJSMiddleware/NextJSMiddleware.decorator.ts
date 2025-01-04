@@ -1,10 +1,8 @@
 import { processArgRequestMetadata } from '@/lib/shared/utils/Decorator.utils';
 import { NextRequest } from 'next/server';
 
-interface NextJsMiddlewareOptions {}
-
 export const NextJSMiddleware =
-  (_?: NextJsMiddlewareOptions) =>
+  () =>
   (
     target: object,
     propertyKey: string,

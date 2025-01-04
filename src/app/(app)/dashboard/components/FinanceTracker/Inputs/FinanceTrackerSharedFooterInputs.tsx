@@ -10,7 +10,7 @@ import { useFinanceTracker } from '@/lib/ui/hooks/useFinanceTracker';
 import { $Enums as PrismaEnums } from '@prisma/client';
 import { useMemo } from 'react';
 
-export const FinanceTrackerSharedFooterInputs = (): JSX.Element => {
+export const FinanceTrackerSharedFooterInputs = () => {
   const { setFieldValue, transaction } = useFinanceTracker();
 
   const handleRepeatTypeChange = (value: number | string): void =>

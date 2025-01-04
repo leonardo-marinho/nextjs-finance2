@@ -30,7 +30,7 @@ export const FinanceTrackerSelect = ({
   onChange,
   placeholder,
   value,
-}: FinanceTrackerSelectProps): JSX.Element => {
+}: FinanceTrackerSelectProps) => {
   inputId ||= name;
   const handleChange = (value: string): void => onChange(value);
 

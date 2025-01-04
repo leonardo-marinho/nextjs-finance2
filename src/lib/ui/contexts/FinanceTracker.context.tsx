@@ -22,17 +22,6 @@ import { noop } from 'lodash';
 import React, { createContext, useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 
-interface FinanceTrackerContextOptions {
-  accounts: AccountPrismaModel[];
-  categories: TransactionCategoryPrismaModel[];
-}
-
-export type FinanceTrackerFieldNameType =
-  | 'repeatInstallments'
-  | 'repeatType'
-  | 'transferAccountId'
-  | keyof TransactionPrismaModel;
-
 export interface FinanceTrackerContextData {
   cloneTransaction: (transaction: TransactionModel) => void;
   deleteTransaction: (id: number) => void;
@@ -65,6 +54,17 @@ export interface FinanceTrackerContextData {
   updateUI: () => void;
 }
 
+export type FinanceTrackerFieldNameType =
+  | 'repeatInstallments'
+  | 'repeatType'
+  | 'transferAccountId'
+  | keyof TransactionPrismaModel;
+
+interface FinanceTrackerContextOptions {
+  accounts: AccountPrismaModel[];
+  categories: TransactionCategoryPrismaModel[];
+}
+
 export const FinanceTrackerContext = createContext<FinanceTrackerContextData>({
   cloneTransaction: noop,
   deleteTransaction: noop,
@@ -87,11 +87,11 @@ export const FinanceTrackerContext = createContext<FinanceTrackerContextData>({
   updateUI: noop,
 });
 
-interface FinanceTrackerProviderProps extends React.PropsWithChildren {}
+type FinanceTrackerProviderProps = React.PropsWithChildren;
 
 export const FinanceTrackerProvider = ({
   children,
-}: FinanceTrackerProviderProps): JSX.Element => {
+}: FinanceTrackerProviderProps) => {
   const { reloadDashboardData } = useDashboard();
 
   const [tab, setTab] = useState<string>(financeTrackerTabs.INCOME);

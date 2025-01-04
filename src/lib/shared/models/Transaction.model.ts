@@ -14,11 +14,9 @@ export class TransactionModel
   extends PrismaBaseModel
   implements TransactionPrismaModel
 {
-  protected account?: AccountPrismaModel;
   accountId: number;
   amount: number;
   billingDate: Date | null;
-  protected category?: TransactionCategoryPrismaModel;
   categoryId: number;
   date: Date;
   ignore: boolean | null;
@@ -28,6 +26,32 @@ export class TransactionModel
   status: PrismaEnums.TransactionStatusEnum;
   tags: null | string;
   type: PrismaEnums.TransactionTypeEnum;
+  get Account(): AccountPrismaModel | undefined {
+    return plainToClass(AccountModel, this.account);
+  }
+  get Amount(): AmountModel {
+    return new AmountModel(this.amount);
+  }
+
+  get BillingDate(): Date | null {
+    return !this?.billingDate ? null : new Date(this.billingDate);
+  }
+
+  get Category(): TransactionCategoryModel | undefined {
+    return plainToClass(TransactionCategoryModel, this.category);
+  }
+
+  get Date(): Date {
+    return new Date(this.date);
+  }
+
+  get Tags(): string[] {
+    return this.tags?.trim()?.split(',') || [];
+  }
+
+  protected account?: AccountPrismaModel;
+
+  protected category?: TransactionCategoryPrismaModel;
 
   getBillingDateString(): string {
     return (this.BillingDate?.toISOString?.() || '').split('T')[0];
@@ -55,29 +79,5 @@ export class TransactionModel
 
   isTransfer(): boolean {
     return this.Category?.isTransfer() || false;
-  }
-
-  get Account(): AccountPrismaModel | undefined {
-    return plainToClass(AccountModel, this.account);
-  }
-
-  get Amount(): AmountModel {
-    return new AmountModel(this.amount);
-  }
-
-  get BillingDate(): Date | null {
-    return !this?.billingDate ? null : new Date(this.billingDate);
-  }
-
-  get Category(): TransactionCategoryModel | undefined {
-    return plainToClass(TransactionCategoryModel, this.category);
-  }
-
-  get Date(): Date {
-    return new Date(this.date);
-  }
-
-  get Tags(): string[] {
-    return this.tags?.trim()?.split(',') || [];
   }
 }

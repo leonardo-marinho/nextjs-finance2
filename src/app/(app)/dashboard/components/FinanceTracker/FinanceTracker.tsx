@@ -15,7 +15,7 @@ import { Spinner, Theme } from '@radix-ui/themes';
 import { X } from 'lucide-react';
 import React, { useState } from 'react';
 
-export const FinanceTracker = (): JSX.Element => {
+export const FinanceTracker = () => {
   const { isUpdatingUI, tab, updateTab } = useFinanceTracker();
   const [showTracker, setShowTracker] = useState(false);
 

@@ -17,7 +17,7 @@ import { useDashboard } from '@/lib/ui/hooks/useDashboard';
 import { Spinner, Theme } from '@radix-ui/themes';
 import React, { useMemo } from 'react';
 
-export const FinanceList = (): JSX.Element => {
+export const FinanceList = () => {
   const { financeListTab, transactionsQuery, updateFinanceListTab } =
     useDashboard();
   const response = transactionsQuery?.data;

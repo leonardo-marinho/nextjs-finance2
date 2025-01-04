@@ -26,7 +26,7 @@ export const ComboBox = ({
   placeholder,
   value,
   ...props
-}: ComboBoxProps): JSX.Element => {
+}: ComboBoxProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [searchValue, setSearchValue] = useState<string>('');
 

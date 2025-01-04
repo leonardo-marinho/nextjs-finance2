@@ -34,7 +34,7 @@ export const FinanceListCard = ({
   editTransaction,
   transaction,
   updateTransaction,
-}: FinanceListCardProps): JSX.Element => {
+}: FinanceListCardProps) => {
   const [isDeleteButtonFirstClick, setIsDeleteButtonFirstClick] =
     useState<boolean>(false);
 

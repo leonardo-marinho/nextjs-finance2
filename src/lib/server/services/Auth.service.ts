@@ -5,6 +5,10 @@ import jwt from 'jsonwebtoken';
 import { omit } from 'lodash';
 
 export class AuthService {
+  static get Secret(): string {
+    return config.jwt.secret;
+  }
+
   static createPayload(user: Partial<User>): Record<string, unknown> {
     return { ...omit(user, 'id'), sub: user.id };
   }
@@ -22,10 +26,6 @@ export class AuthService {
     const options = { expiresIn: config.jwt.expiresIn };
 
     return jwt.sign(payload, AuthService.Secret, options);
-  }
-
-  static get Secret(): string {
-    return config.jwt.secret;
   }
 
   static signIn(user: Partial<User>): string {

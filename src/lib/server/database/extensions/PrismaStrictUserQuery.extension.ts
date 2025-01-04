@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Prisma, PrismaPromise } from '@prisma/client';
 
 export const PrismaStrictUserQueryExtension = {
@@ -13,7 +14,10 @@ export const PrismaStrictUserQueryExtension = {
       operation: string;
       query: (args: any) => PrismaPromise<any>;
     }): PrismaPromise<any> {
-      if (model === Prisma.ModelName.User || !(operation.search('/find/i') >= 0))
+      if (
+        model === Prisma.ModelName.User ||
+        !(operation.search('/find/i') >= 0)
+      )
         return query(args);
 
       if (!args?.where?.userId)

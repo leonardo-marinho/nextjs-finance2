@@ -15,7 +15,7 @@ import { Prisma, $Enums as PrismaEnums } from '@prisma/client';
 import { ArrowDown10, ArrowUp01, Filter, FilterX } from 'lucide-react';
 import { useMemo } from 'react';
 
-export const FinanceListFilter = (): JSX.Element => {
+export const FinanceListFilter = () => {
   const {
     financeListFilters,
     financeListPagination,

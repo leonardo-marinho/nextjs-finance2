@@ -12,7 +12,7 @@ import { useDashboard } from '@/lib/ui/hooks/useDashboard';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-export const DashboardHeader = (): JSX.Element => {
+export const DashboardHeader = () => {
   const { currDate, updateRefDate } = useDashboard();
 
   const [monthFilter, setMonthFilter] = useState<string>(

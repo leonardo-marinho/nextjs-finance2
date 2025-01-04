@@ -9,12 +9,12 @@ interface FinanceTrackerSwitchProps
 }
 
 export const FinanceTrackerSwitch = ({
-  label,
   name,
   id: inputId = name,
+  label,
   onChange,
   ...props
-}: FinanceTrackerSwitchProps): JSX.Element => (
+}: FinanceTrackerSwitchProps) => (
   <div className="flex flex-1 items-center gap-2">
     <Switch {...props} id={inputId} name={name} onCheckedChange={onChange} />
     <Label htmlFor={inputId}>{label}</Label>

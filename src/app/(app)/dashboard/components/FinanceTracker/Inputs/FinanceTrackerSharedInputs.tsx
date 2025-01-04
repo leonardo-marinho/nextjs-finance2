@@ -7,7 +7,7 @@ import { useFinanceTracker } from '@/lib/ui/hooks/useFinanceTracker';
 import { SelectItemDataValue } from '@/lib/ui/types/Select';
 import { useMemo, useState } from 'react';
 
-export const FinanceTrackerSharedInputs = (): JSX.Element => {
+export const FinanceTrackerSharedInputs = () => {
   const {
     optionsSelectItems,
     setFieldsValues,

@@ -22,7 +22,7 @@ export const FinanceTrackerComboBox = ({
   onChange,
   onTagsChange,
   ...props
-}: FinanceTrackerComboBoxProps): JSX.Element => {
+}: FinanceTrackerComboBoxProps) => {
   const [value, setValue] = useState<string | undefined>(props?.defaultValue);
   const { options, optionsSelectItems, transaction } = useFinanceTracker();
   const [items, setItems] = useState<ReactNode[]>([]);
@@ -68,7 +68,7 @@ export const FinanceTrackerComboBox = ({
     }: {
       category?: string;
       tagsString: string;
-    }): JSX.Element => (
+    }) => (
       <div
         className="flex w-full gap-1"
         onClick={() => handleChange(tagsString)}

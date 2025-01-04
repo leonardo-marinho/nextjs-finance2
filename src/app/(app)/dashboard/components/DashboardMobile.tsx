@@ -6,7 +6,7 @@ import { FinanceTracker } from '@/app/(app)/dashboard/components/FinanceTracker/
 import { useState } from 'react';
 import { useSwipeable } from 'react-swipeable';
 
-export const Dashboard = (): JSX.Element => {
+export const Dashboard = () => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
   const handlers = useSwipeable({

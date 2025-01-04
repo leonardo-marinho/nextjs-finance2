@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 
-const LoginPage = (): JSX.Element => {
+const LoginPage = () => {
   const router = useRouter();
 
   const [email, setEmail] = useState<string>('');

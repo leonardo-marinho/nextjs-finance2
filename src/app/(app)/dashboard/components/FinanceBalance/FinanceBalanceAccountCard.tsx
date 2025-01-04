@@ -14,7 +14,7 @@ interface FinanceBalanceAccountCardProps
 export const FinanceBalanceAccountCard = ({
   account,
   isCreditCard,
-}: FinanceBalanceAccountCardProps): JSX.Element => {
+}: FinanceBalanceAccountCardProps) => {
   const { updateFinanceListFilters } = useDashboard();
   const handleAccountClick = (): void =>
     updateFinanceListFilters({

@@ -11,7 +11,7 @@ import { PanelRightOpen } from 'lucide-react';
 import { useState } from 'react';
 import { useSwipeable } from 'react-swipeable';
 
-export const Dashboard = (): JSX.Element => {
+export const Dashboard = () => {
   const { setShowFinanceTrackerPanel, showFinanceTrackerPanel } =
     useFinanceTracker();
 

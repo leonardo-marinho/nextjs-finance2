@@ -6,7 +6,7 @@ import Head from 'next/head';
 import { PropsWithChildren } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
 
-const RootLayout = ({ children }: PropsWithChildren): JSX.Element => {
+const RootLayout = ({ children }: PropsWithChildren) => {
   return (
     <html className="dark h-full max-h-full max-w-full overflow-x-hidden">
       <Head>

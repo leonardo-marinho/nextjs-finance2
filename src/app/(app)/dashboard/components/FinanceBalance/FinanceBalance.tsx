@@ -22,7 +22,7 @@ import { useDashboard } from '@/lib/ui/hooks/useDashboard';
 import { Spinner, Theme } from '@radix-ui/themes';
 import React from 'react';
 
-export const FinanceBalance = (): JSX.Element => {
+export const FinanceBalance = () => {
   const { balanceBiQuery, financeListTab, updateFinanceListTab } =
     useDashboard();
   const data: BalanceBiDto = balanceBiQuery?.data;

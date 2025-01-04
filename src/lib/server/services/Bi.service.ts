@@ -4,7 +4,7 @@ import {
   BalanceBiDto,
 } from '@/lib/shared/dtos/BiGetBalanceBi.dto';
 import { TransactionModel } from '@/lib/shared/models/Transaction.model';
-import { addDays, lastDayOfMonth } from '@/lib/shared/utils/Date.utils';
+import { lastDayOfMonth } from '@/lib/shared/utils/Date.utils';
 import { $Enums as PrismaEnums } from '@prisma/client';
 import { pick } from 'lodash';
 
@@ -33,7 +33,7 @@ export class BiService {
     return Array.from(
       balanceMap,
       ([, { balance, id, name }]: [number, AccountBalance]) =>
-        ({ balance, id, name }) as AccountBalance,
+        ({ balance, id, name } as AccountBalance),
     ).sort((a: AccountBalance, b: AccountBalance) =>
       a.name.localeCompare(b.name),
     );
@@ -45,7 +45,7 @@ export class BiService {
     endDate: Date,
     skipPrevMonth: boolean = false,
   ): Promise<BalanceBiDto> {
-    let prevMonthBalanceBi: BalanceBiDto['prevMonthBalanceBi'] | null =
+    const prevMonthBalanceBi: BalanceBiDto['prevMonthBalanceBi'] | null =
       skipPrevMonth
         ? null
         : pick(await this.getBalanceBi(userId, new Date(0), startDate, true), [
