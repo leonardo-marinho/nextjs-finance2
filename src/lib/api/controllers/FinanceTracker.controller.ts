@@ -60,14 +60,11 @@ export class FinanceTrackerController {
 
   @Endpoint({ private: true })
   static async deleteTransaction(
-    @UserId() userId: number,
-    @Query({ schema: IdQueryDto }) q: IdQueryDto,
+    @Query({ schema: IdQueryDto }) { id }: IdQueryDto,
   ): Promise<boolean> {
-    console.log('deleteTransaction', q);
     const originalTransaction = await prisma.transaction.findUnique({
       where: {
-        id: q.id,
-        userId,
+        id,
       },
     });
 
@@ -77,30 +74,22 @@ export class FinanceTrackerController {
       await FinanceTrackerService.deleteRepeatTransaction(
         originalTransaction.repeatId,
       );
-    else await prisma.transaction.delete({ where: { id: q.id } });
+    else await prisma.transaction.delete({ where: { id } });
 
     return true;
   }
 
   @Endpoint({ private: true })
-  static async getOptions(
-    @UserId() userId: number,
-  ): Promise<FinanceTrackerOptionsDto> {
+  static async getOptions(): Promise<FinanceTrackerOptionsDto> {
     const [accounts, categories, transactionsRaw] = await prisma.$transaction([
       prisma.account.findMany({
         orderBy: {
           name: 'asc',
         },
-        where: {
-          userId,
-        },
       }),
       prisma.transactionCategory.findMany({
         orderBy: {
           name: 'asc',
-        },
-        where: {
-          userId,
         },
       }),
       prisma.transaction.findMany({
@@ -111,9 +100,6 @@ export class FinanceTrackerController {
           createdAt: 'desc',
         },
         take: 250,
-        where: {
-          userId,
-        },
       }),
     ]);
 
@@ -144,7 +130,6 @@ export class FinanceTrackerController {
 
   @Endpoint({ private: true })
   static async updateTransaction(
-    @UserId() userId: number,
     @Query({ schema: IdQueryDto }) { id }: IdQueryDto,
     @Body({ schema: FinanceTrackerUpdateTransactionBody })
     body: FinanceTrackerUpdateTransactionBody,
@@ -180,7 +165,6 @@ export class FinanceTrackerController {
     const originalTransaction = await prisma.transaction.findUnique({
       where: {
         id,
-        userId,
       },
     });
 

@@ -1,31 +1,32 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Prisma, PrismaPromise } from '@prisma/client';
+import { RequestContextManager } from '@/lib/api/helpers/RequestContextManager';
+import { Prisma } from '@prisma/client';
 
-export const PrismaStrictUserQueryExtension = {
+const whitelistModels = ['User'];
+
+export const PrismaStrictUserQueryExtension = Prisma.defineExtension({
+  name: 'StrictUserQuery',
   query: {
-    $allOperations({
-      args,
-      model,
-      operation,
-      query,
-    }: {
-      args: any;
-      model?: string | undefined;
-      operation: string;
-      query: (args: any) => PrismaPromise<any>;
-    }): PrismaPromise<any> {
+    $allOperations({ args, model, operation, query }) {
       if (
-        model === Prisma.ModelName.User ||
-        !(operation.search('/find/i') >= 0)
-      )
+        whitelistModels.includes(model!) ||
+        !operation.match(/find|update|delete|count/i)
+      ) {
         return query(args);
+      }
 
-      if (!args?.where?.userId)
+      const context = RequestContextManager.get();
+      if (!context?.userId) {
         throw new Error(
-          `userId is required for model ${model} with operation ${operation}. This is a strict user related query.`,
+          'userId is required but not found in the request context',
         );
+      }
+
+      args.where = {
+        ...args.where,
+        userId: context.userId,
+      };
 
       return query(args);
     },
   },
-};
+});

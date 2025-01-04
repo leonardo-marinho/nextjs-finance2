@@ -11,12 +11,10 @@ import { plainToInstance } from 'class-transformer';
 
 export class TransactionService {
   static async getTransactions(
-    userId: number,
     rawFilters?: TransactionsFilters,
     pagination?: ApiPagination,
   ): Promise<TransactionModel[]> {
     const [transactions] = await this.getTransactionsAndCount(
-      userId,
       rawFilters,
       pagination,
     );
@@ -25,11 +23,10 @@ export class TransactionService {
   }
 
   static async getTransactionsAndCount(
-    userId: number,
     rawFilters?: TransactionsFilters,
     pagination?: ApiPagination,
   ): Promise<[TransactionModel[], number]> {
-    const filters = this.resolveFilters(userId, rawFilters);
+    const filters = this.resolveFilters(rawFilters);
     const orderBy = pagination?.sort?.map((sort: ApiPaginationSortOrder) => ({
       [sort.field]: sort.order,
     }));
@@ -49,7 +46,6 @@ export class TransactionService {
   }
 
   static resolveFilters(
-    userId: number,
     rawFilters?: TransactionQueryRawFilters,
   ): Prisma.TransactionWhereInput {
     const filters: Prisma.TransactionWhereInput = {
@@ -58,14 +54,13 @@ export class TransactionService {
         ? { name: 'Placeholder' }
         : undefined,
       OR: rawFilters?.or?.map((or: TransactionQueryRawFilters) =>
-        this.resolveFilters(userId, or),
+        this.resolveFilters(or),
       ),
       paymentMethod: rawFilters?.paymentMethod
         ? { in: rawFilters.paymentMethod }
         : undefined,
       repeatId: rawFilters?.repeatOnly ? { not: null } : undefined,
       type: rawFilters?.type ? { in: rawFilters.type } : undefined,
-      userId,
     };
 
     if (rawFilters?.placeholderOnly) filters.category = { name: 'Placeholder' };

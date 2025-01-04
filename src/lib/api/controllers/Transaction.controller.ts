@@ -8,15 +8,14 @@ import { ApiPaginatedData } from '@/lib/shared/types/Api.types';
 import { ApiResponseUtils } from '@/lib/shared/utils/ApiResponse.utils';
 import { plainToInstance } from 'class-transformer';
 
-import { Params, Query, UserId } from '../decorators/Args';
+import { Params, Query } from '../decorators/Args';
 
 export class TransactionController {
   @Endpoint({ private: true })
   static async getTransactionById(
-    @UserId() userId: number,
     @Query({ schema: IdQueryDto }) { id }: IdQueryDto,
   ): Promise<null | TransactionModel> {
-    const transactions = await TransactionService.getTransactions(userId, {
+    const transactions = await TransactionService.getTransactions({
       id,
     });
     const transaction = transactions?.[0];
@@ -29,13 +28,11 @@ export class TransactionController {
 
   @Endpoint({ private: true })
   static async getTransactions(
-    @UserId() userId: number,
     @Params({ schema: GetTransactionsParamsDto })
     params: GetTransactionsParamsDto,
   ): Promise<ApiPaginatedData<TransactionModel>> {
     const [transactions, count] =
       await TransactionService.getTransactionsAndCount(
-        userId,
         params?.filters,
         params?.pagination,
       );

@@ -40,7 +40,6 @@ export class BiService {
   }
 
   static async getBalanceBi(
-    userId: number,
     startDate: Date,
     endDate: Date,
     skipPrevMonth: boolean = false,
@@ -48,7 +47,7 @@ export class BiService {
     const prevMonthBalanceBi: BalanceBiDto['prevMonthBalanceBi'] | null =
       skipPrevMonth
         ? null
-        : pick(await this.getBalanceBi(userId, new Date(0), startDate, true), [
+        : pick(await this.getBalanceBi(new Date(0), startDate, true), [
             'balance',
             'billableBalance',
             'totalBillableExpense',
@@ -58,21 +57,21 @@ export class BiService {
           ]);
 
     const accountsTransactions: TransactionModel[] =
-      await TransactionService.getTransactions(userId, {
+      await TransactionService.getTransactions({
         endDate,
         paymentMethod: [PrismaEnums.PaymentMethodEnum.ACCOUNT],
         startDate,
       });
 
     const currMonthCreditCardsTransactions: TransactionModel[] =
-      await TransactionService.getTransactions(userId, {
+      await TransactionService.getTransactions({
         endDate,
         paymentMethod: [PrismaEnums.PaymentMethodEnum.CREDIT_CARD],
         startDate,
       });
 
     const billableCreditCardsTransactions: TransactionModel[] =
-      await TransactionService.getTransactions(userId, {
+      await TransactionService.getTransactions({
         billableEndDate: endDate,
         billableStartDate: startDate,
         paymentMethod: [PrismaEnums.PaymentMethodEnum.CREDIT_CARD],
@@ -148,12 +147,12 @@ export class BiService {
     } as BalanceBiDto;
   }
 
-  static async getMonthBalance(date: Date, userId: number): Promise<number> {
+  static async getMonthBalance(date: Date): Promise<number> {
     const startMonthDate = new Date(date.getFullYear(), date.getMonth());
     const endMonthDate = DateUtils.lastDayOfMonth(startMonthDate);
 
     const transactions: TransactionModel[] =
-      await TransactionService.getTransactions(userId, {
+      await TransactionService.getTransactions({
         endDate: endMonthDate,
         startDate: startMonthDate,
       });
