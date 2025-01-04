@@ -1,7 +1,7 @@
-import { Endpoint } from '@/lib/server/decorators/Endpoint.decorator';
-import Params from '@/lib/server/decorators/Params.decorator';
-import UserId from '@/lib/server/decorators/UserId.decorator';
-import { BiService } from '@/lib/server/services/Bi.service';
+import { Endpoint } from '@/lib/api/decorators/Endpoint.decorator';
+import Params from '@/lib/api/decorators/Params.decorator';
+import UserId from '@/lib/api/decorators/UserId.decorator';
+import { BiService } from '@/lib/api/services/Bi.service';
 import {
   BalanceBiDto,
   BiGetBalanceBiParamsDto,

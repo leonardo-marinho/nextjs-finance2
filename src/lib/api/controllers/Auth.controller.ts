@@ -1,8 +1,8 @@
-import Body from '@/lib/server/decorators/Body.decorator';
-import { Endpoint } from '@/lib/server/decorators/Endpoint.decorator';
-import { UserService } from '@/lib/server/services/User.service';
-import { TokenPayload } from '@/lib/server/types/Auth.types';
+import Body from '@/lib/api/decorators/Body.decorator';
+import { Endpoint } from '@/lib/api/decorators/Endpoint.decorator';
+import { UserService } from '@/lib/api/services/User.service';
 import { AuthSignInBodyDto } from '@/lib/shared/dtos/AuthSignInBody.dto';
+import { TokenPayload } from '@/lib/shared/types/Auth.types';
 
 export class AuthController {
   @Endpoint()

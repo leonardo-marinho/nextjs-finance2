@@ -1,6 +1,6 @@
-import { TokenPayload } from '@/lib/server/types/Auth.types';
 import { AuthSignInBodyDto } from '@/lib/shared/dtos/AuthSignInBody.dto';
 import { ApiResponse } from '@/lib/shared/types/Api.types';
+import { TokenPayload } from '@/lib/shared/types/Auth.types';
 import { ApiService } from '@/lib/ui/services/Api.service';
 
 class AuthApiService extends ApiService {

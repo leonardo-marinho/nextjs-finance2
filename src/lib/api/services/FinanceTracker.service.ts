@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/server/database';
+import { prisma } from '@/lib/api/database';
 import { FinanceTrackerUpdateTransactionBody } from '@/lib/shared/dtos/FinanceTrackerUpdateTransactionBody.dto';
 import { TransactionModel } from '@/lib/shared/models/Transaction.model';
 import { addMonths, addWeeks } from '@/lib/shared/utils/Date.utils';

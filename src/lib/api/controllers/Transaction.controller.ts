@@ -1,9 +1,9 @@
-import { Endpoint } from '@/lib/server/decorators/Endpoint.decorator';
-import Params from '@/lib/server/decorators/Params.decorator';
-import Query from '@/lib/server/decorators/Query.decorator';
-import UserId from '@/lib/server/decorators/UserId.decorator';
-import { TransactionService } from '@/lib/server/services/Transaction.service';
-import { createPaginatedData } from '@/lib/server/utils/Api.utils';
+import { Endpoint } from '@/lib/api/decorators/Endpoint.decorator';
+import Params from '@/lib/api/decorators/Params.decorator';
+import Query from '@/lib/api/decorators/Query.decorator';
+import UserId from '@/lib/api/decorators/UserId.decorator';
+import { TransactionService } from '@/lib/api/services/Transaction.service';
+import { createPaginatedData } from '@/lib/api/utils/Api.utils';
 import { GetTransactionsParamsDto } from '@/lib/shared/dtos/GetTransactionsParams.dto';
 import { IdQueryDto } from '@/lib/shared/dtos/IdQuery.dto';
 import { ApiNotFoundException } from '@/lib/shared/exceptions/ApiNotFound.exception';

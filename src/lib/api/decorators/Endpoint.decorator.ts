@@ -1,5 +1,5 @@
-import { AuthService } from '@/lib/server/services/Auth.service';
-import { parsePayload } from '@/lib/server/utils/Api.utils';
+import { AuthService } from '@/lib/api/services/Auth.service';
+import { parsePayload } from '@/lib/api/utils/Api.utils';
 import { config } from '@/lib/shared/config';
 import { ApiBodyValidationException } from '@/lib/shared/exceptions/ApiBodyValidation.exception';
 import { ApiInternalServerErrorException } from '@/lib/shared/exceptions/ApiInternalServerError.exception';

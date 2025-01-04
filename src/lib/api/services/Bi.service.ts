@@ -1,4 +1,4 @@
-import { TransactionService } from '@/lib/server/services/Transaction.service';
+import { TransactionService } from '@/lib/api/services/Transaction.service';
 import {
   AccountBalance,
   BalanceBiDto,

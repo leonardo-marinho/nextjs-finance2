@@ -1,4 +1,4 @@
-import { validateApiPayload } from '@/lib/server/utils/Validation.utils';
+import { validateApiPayload } from '@/lib/api/utils/Validation.utils';
 import { DEFAULT_API_PAGINATION_PARAMS_TAKE } from '@/lib/shared/dtos/ApiPaginationParams.dto';
 import { ApiDataType, ApiPaginatedData } from '@/lib/shared/types/Api.types';
 import { ClassConstructor, plainToInstance } from 'class-transformer';

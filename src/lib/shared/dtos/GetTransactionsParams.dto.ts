@@ -1,4 +1,3 @@
-import { TransactionQueryRawFilters } from '@/lib/server/services/Transaction.service';
 import { ApiPaginationParamsDto } from '@/lib/shared/dtos/ApiPaginationParams.dto';
 import { Prisma, $Enums as PrismaEnums } from '@prisma/client';
 import { Transform } from 'class-transformer';
@@ -12,6 +11,8 @@ import {
   ValidateIf,
   ValidateNested,
 } from 'class-validator';
+
+import { TransactionQueryRawFilters } from '../types/Transaction.types';
 
 export class TransactionsFilters implements TransactionQueryRawFilters {
   @IsOptional()

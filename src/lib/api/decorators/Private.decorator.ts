@@ -1,4 +1,4 @@
-import { AuthService } from '@/lib/server/services/Auth.service';
+import { AuthService } from '@/lib/api/services/Auth.service';
 import { config } from '@/lib/shared/config';
 import { ApiInternalServerErrorException } from '@/lib/shared/exceptions/ApiInternalServerError.exception';
 import { ApiUnauthorizedException } from '@/lib/shared/exceptions/ApiUnauthorized.exception';

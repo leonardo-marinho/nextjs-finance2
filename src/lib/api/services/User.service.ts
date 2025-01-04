@@ -1,10 +1,10 @@
-import { prisma } from '@/lib/server/database';
-import { AuthService } from '@/lib/server/services/Auth.service';
-import { TokenPayload } from '@/lib/server/types/Auth.types';
+import { prisma } from '@/lib/api/database';
+import { AuthService } from '@/lib/api/services/Auth.service';
 import { AuthSignInBodyDto } from '@/lib/shared/dtos/AuthSignInBody.dto';
 import { AuthSignUpBody } from '@/lib/shared/dtos/AuthSignUpBody.dto';
 import { ApiAuthException } from '@/lib/shared/exceptions/ApiAuth.exception';
 import { UserModel } from '@/lib/shared/models/User.model';
+import { TokenPayload } from '@/lib/shared/types/Auth.types';
 import { User } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { plainToClass } from 'class-transformer';

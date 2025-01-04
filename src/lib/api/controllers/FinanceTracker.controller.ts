@@ -1,9 +1,9 @@
-import { prisma } from '@/lib/server/database';
-import Body from '@/lib/server/decorators/Body.decorator';
-import { Endpoint } from '@/lib/server/decorators/Endpoint.decorator';
-import Query from '@/lib/server/decorators/Query.decorator';
-import UserId from '@/lib/server/decorators/UserId.decorator';
-import { FinanceTrackerService } from '@/lib/server/services/FinanceTracker.service';
+import { prisma } from '@/lib/api/database';
+import Body from '@/lib/api/decorators/Body.decorator';
+import { Endpoint } from '@/lib/api/decorators/Endpoint.decorator';
+import Query from '@/lib/api/decorators/Query.decorator';
+import UserId from '@/lib/api/decorators/UserId.decorator';
+import { FinanceTrackerService } from '@/lib/api/services/FinanceTracker.service';
 import { FinanceTrackerOptionsDto } from '@/lib/shared/dtos/FinanceTrackerOptions.dto';
 import { FinanceTrackerUpdateTransactionBody } from '@/lib/shared/dtos/FinanceTrackerUpdateTransactionBody.dto';
 import { IdQueryDto } from '@/lib/shared/dtos/IdQuery.dto';

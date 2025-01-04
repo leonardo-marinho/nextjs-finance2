@@ -1,27 +1,13 @@
-import { prisma } from '@/lib/server/database';
+import { prisma } from '@/lib/api/database';
 import {
   ApiPagination,
   ApiPaginationSortOrder,
 } from '@/lib/shared/dtos/ApiPaginationParams.dto';
 import { TransactionsFilters } from '@/lib/shared/dtos/GetTransactionsParams.dto';
 import { TransactionModel } from '@/lib/shared/models/Transaction.model';
+import { TransactionQueryRawFilters } from '@/lib/shared/types/Transaction.types';
 import { Prisma, $Enums as PrismaEnum } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
-
-export interface TransactionQueryRawFilters {
-  accountId?: number;
-  billableEndDate?: Date;
-  billableStartDate?: Date;
-  endDate?: Date;
-  id?: number;
-  or?: TransactionQueryRawFilters[];
-  paymentMethod?: PrismaEnum.PaymentMethodEnum[];
-  pendingOnly?: boolean;
-  placeholderOnly?: boolean;
-  repeatOnly?: boolean;
-  startDate?: Date;
-  type?: PrismaEnum.TransactionTypeEnum[];
-}
 
 export class TransactionService {
   static async getTransactions(

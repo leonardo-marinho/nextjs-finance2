@@ -17,7 +17,7 @@
     "prepare": "husky"
   },
   "prisma": {
-    "schema": "src/lib/server/database/schema.prisma"
+    "schema": "src/lib/api/database/schema.prisma"
   },
   "dependencies": {
     "@fontsource/inter": "^5.1.1",
