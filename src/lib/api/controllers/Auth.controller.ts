@@ -6,7 +6,9 @@ import { TokenPayload } from '@/lib/shared/types/Auth.types';
 import { Body } from '../decorators/Args';
 
 export class AuthController {
-  @Endpoint()
+  @Endpoint({
+    private: false,
+  })
   static async signIn(
     @Body({ schema: AuthSignInBodyDto }) body: AuthSignInBodyDto,
   ): Promise<TokenPayload> {
